@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,7 @@
 		826FF0412C60580B00559DED /* CornerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826FF0402C60580B00559DED /* CornerTests.swift */; };
 		826FF04B2C60580B00559DED /* CornerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826FF04A2C60580B00559DED /* CornerUITests.swift */; };
 		826FF04D2C60580B00559DED /* CornerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826FF04C2C60580B00559DED /* CornerUITestsLaunchTests.swift */; };
+		826FF05B2C60597300559DED /* CornerParser in Frameworks */ = {isa = PBXBuildFile; productRef = 826FF05A2C60597300559DED /* CornerParser */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				826FF05B2C60597300559DED /* CornerParser in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,6 +147,9 @@
 			dependencies = (
 			);
 			name = Corner;
+			packageProductDependencies = (
+				826FF05A2C60597300559DED /* CornerParser */,
+			);
 			productName = Corner;
 			productReference = 826FF02B2C60580A00559DED /* Corner.app */;
 			productType = "com.apple.product-type.application";
@@ -217,6 +222,9 @@
 				Base,
 			);
 			mainGroup = 826FF0222C60580A00559DED;
+			packageReferences = (
+				826FF0592C60597300559DED /* XCLocalSwiftPackageReference "../CornerParser" */,
+			);
 			productRefGroup = 826FF02C2C60580A00559DED /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -581,6 +589,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		826FF0592C60597300559DED /* XCLocalSwiftPackageReference "../CornerParser" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../CornerParser;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		826FF05A2C60597300559DED /* CornerParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CornerParser;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 826FF0232C60580A00559DED /* Project object */;
 }
