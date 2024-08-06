@@ -21,6 +21,7 @@
 		8273F66D2C6262A300B589A7 /* NodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8273F66C2C6262A300B589A7 /* NodeView.swift */; };
 		8273F6702C6262C100B589A7 /* EdgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8273F66F2C6262C100B589A7 /* EdgeView.swift */; };
 		8273F6732C6262E600B589A7 /* DiagramLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8273F6722C6262E600B589A7 /* DiagramLayout.swift */; };
+		8273F6762C62673B00B589A7 /* DiagramViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8273F6752C62673B00B589A7 /* DiagramViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		8273F66C2C6262A300B589A7 /* NodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeView.swift; sourceTree = "<group>"; };
 		8273F66F2C6262C100B589A7 /* EdgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeView.swift; sourceTree = "<group>"; };
 		8273F6722C6262E600B589A7 /* DiagramLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramLayout.swift; sourceTree = "<group>"; };
+		8273F6752C62673B00B589A7 /* DiagramViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 		826FF02D2C60580A00559DED /* Corner */ = {
 			isa = PBXGroup;
 			children = (
+				8273F6742C62672800B589A7 /* ViewModel */,
 				826FF02E2C60580A00559DED /* CornerApp.swift */,
 				826FF0302C60580A00559DED /* ContentView.swift */,
 				826FF0322C60580B00559DED /* Assets.xcassets */,
@@ -169,8 +172,16 @@
 			children = (
 				8273F6692C62626300B589A7 /* Diagram.swift */,
 				8273F6722C6262E600B589A7 /* DiagramLayout.swift */,
+				8273F6752C62673B00B589A7 /* DiagramViewModel.swift */,
 			);
 			path = Diagram;
+			sourceTree = "<group>";
+		};
+		8273F6742C62672800B589A7 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -309,6 +320,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8273F6762C62673B00B589A7 /* DiagramViewModel.swift in Sources */,
 				8273F6662C62621D00B589A7 /* Node.swift in Sources */,
 				8273F6732C6262E600B589A7 /* DiagramLayout.swift in Sources */,
 				826FF0312C60580A00559DED /* ContentView.swift in Sources */,

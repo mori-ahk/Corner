@@ -9,30 +9,41 @@ import SwiftUI
 import CornerParser
 
 struct ContentView: View {
+    @StateObject private var vm = DiagramViewModel()
     @State private var positions: [CGPoint] = []
-    var nodes: [Node] = []
-    
-    init(nodes: [Node]) {
-        self.nodes = nodes
-        self._positions = State(initialValue: Array(repeating: .zero, count: nodes.count))
-    }
+    @State private var diagram: Diagram?
     
     var body: some View {
-        VStack {
-            ZStack {
+        ZStack {
+            if let diagram {
                 DiagramLayout {
-                    ForEach(Array(nodes.enumerated()), id: \.offset) { index, element in
+                    ForEach(Array(diagram.nodes.enumerated()), id: \.element.id) { index, element in
                         NodeView(node: element, position: $positions[index])
                     }
                 }
             }
-            
-            // Display the positions
-            ForEach(Array(positions.enumerated()), id: \.offset) { index, position in
-                Text("Node \(["A", "B", "C"][index]) position: \(position.x), \(position.y)")
+        }
+        .padding()
+        .onAppear {
+            do {
+                try vm.diagram(for: """
+                node A { color: blue }
+                node B { color: red }
+                node C { color: green }
+
+                edge A -> B { label: "eddge" }
+                """)
+            } catch {
+                print(error)
             }
         }
+        .onReceive(vm.$diagram) { newDiagram in
+            self.diagram = newDiagram
+            positions.removeAll(keepingCapacity: true)
+            positions = Array(repeating: .zero, count: diagram?.nodes.count ?? .zero)
+        }
         .coordinateSpace(.named("Diagram"))
+        .animation(.default, value: diagram)
     }
 }
 

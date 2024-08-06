@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Diagram {
+struct Diagram: Equatable {
     let nodes: [Node]
     let edges: [Edge]
 }
