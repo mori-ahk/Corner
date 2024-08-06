@@ -11,7 +11,11 @@ import SwiftUI
 struct CornerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(nodes: [
+                Node(id: "ImageRepo", color: .blue),
+                Node(id: "ImageCache", color: .green),
+            ])
+            .fontDesign(.monospaced)
         }
     }
 }
