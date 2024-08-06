@@ -12,6 +12,7 @@ struct CornerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .fontDesign(.monospaced)
         }
     }
 }
