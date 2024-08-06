@@ -14,7 +14,7 @@ struct ContentView: View {
     @State private var diagram: Diagram?
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .topLeading) {
             if let diagram {
                 DiagramLayout {
                     ForEach(Array(diagram.nodes.enumerated()), id: \.element.id) { index, element in
@@ -23,13 +23,15 @@ struct ContentView: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding()
         .onAppear {
             do {
                 try vm.diagram(for: """
-                node A { color: blue }
-                node B { color: red }
-                node C { color: green }
+                node Parser { color: blue }
+                node Lexer { color: orange }
+                node SemanticAnalyzer { color: green }
+                node TypeChecker { color: mint }
 
                 edge A -> B { label: "eddge" }
                 """)

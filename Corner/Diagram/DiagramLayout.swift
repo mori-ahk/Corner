@@ -10,22 +10,52 @@ import SwiftUI
 struct DiagramLayout: Layout {
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         guard !subviews.isEmpty else { return .zero }
-        return proposal.replacingUnspecifiedDimensions()
+        
+        let maxSize = maxSize(subviews: subviews)
+        let spacing = spacing(subviews: subviews)
+        let totalSpacing = spacing.reduce(0) { $0 + $1 }
+        
+        return CGSize(
+            width: maxSize.width * CGFloat(subviews.count) + totalSpacing,
+            height: maxSize.height
+        )
     }
     
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         guard !subviews.isEmpty else { return }
         
-        let proposedViewSize = ProposedViewSize(width: 120, height: 120)
-        var nextX = bounds.minX + 80
+        let maxSize = maxSize(subviews: subviews)
+        let spacing = spacing(subviews: subviews)
+       
+        let placementProposal = ProposedViewSize(width: maxSize.width, height: maxSize.height)
+        var x = bounds.minX + maxSize.width / 2
+        
         for index in subviews.indices {
-            let position = CGPoint(x: nextX, y: bounds.minY + 60)
             subviews[index].place(
-                at: position,
+                at: CGPoint(x: x, y: bounds.midY),
                 anchor: .center,
-                proposal: proposedViewSize
-            )
-            nextX += 80 + 100
+                proposal: placementProposal)
+            x += maxSize.width + spacing[index]
+        }
+    }
+    
+    private func maxSize(subviews: Subviews) -> CGSize {
+        let subviewSizes = subviews.map { $0.sizeThatFits(.unspecified) }
+        let maxSize: CGSize = subviewSizes.reduce(.zero) { currentMax, subviewSize in
+            CGSize(
+                width: max(currentMax.width, subviewSize.width),
+                height: max(currentMax.height, subviewSize.height))
+        }
+
+        return maxSize
+    }
+    
+    private func spacing(subviews: Subviews) -> [CGFloat] {
+        subviews.indices.map { index in
+            guard index < subviews.count - 1 else { return 0 }
+            return subviews[index].spacing.distance(
+                to: subviews[index + 1].spacing,
+                along: .horizontal)
         }
     }
 }
