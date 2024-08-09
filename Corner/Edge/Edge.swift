@@ -14,12 +14,14 @@ struct Edge: Identifiable, Equatable {
     let to: String
     var color: Color
     var label: String
+    var placement: EdgePlacement
     
-    init?(from edgeDecl: ASTNode.EdgeDecl) {
+    init?(from edgeDecl: ASTNode.EdgeDecl, placement: EdgePlacement) {
         self.from = edgeDecl.from
         self.to = edgeDecl.to
         self.color = .black
         self.label = ""
+        self.placement = placement
         
         guard !edgeDecl.attributes.isEmpty else {
             self.color = .black

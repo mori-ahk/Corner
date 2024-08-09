@@ -18,7 +18,8 @@ struct Node: Identifiable, Equatable {
         guard case let .node(nodeDecl) = astNode else { return nil }
         self.id = nodeDecl.id
         self.color = .black
-        self.edges = nodeDecl.edges.compactMap { Edge(from: $0) }
+        var avaliableEdgePlacement = EdgePlacement.allCases
+        self.edges = nodeDecl.edges.compactMap { Edge(from: $0, placement: avaliableEdgePlacement.removeFirst()) }
         
         if let attribute = nodeDecl.attribute {
             guard case let .color(colorString) = attribute else {
@@ -28,7 +29,7 @@ struct Node: Identifiable, Equatable {
             
             self.color = color(from: colorString)
         } else {
-            self.color = [Color.blue, Color.orange, Color.green, Color.indigo].randomElement()!
+            self.color = [Color.blue, Color.orange, Color.green, Color.indigo, Color.red, Color.brown, Color.cyan].randomElement()!
         }
     }
     
@@ -46,4 +47,15 @@ struct Node: Identifiable, Equatable {
         default: .teal
         }
     }
+}
+
+enum EdgePlacement: CaseIterable {
+    case topTrailing
+    case trailing
+    case bottomTrailing
+    case bottom
+    case bottomLeading
+    case leading
+    case topLeading
+    case top
 }

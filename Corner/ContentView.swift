@@ -11,6 +11,7 @@ import CornerParser
 struct ContentView: View {
     @StateObject private var vm = DiagramViewModel()
     @State private var positions: [Node.ID : Anchor<CGPoint>] = [:]
+    @State private var sizes: [Node.ID : CGSize] = [:]
     @State private var layeredNodes: [[Node]] = []
     @State private var nodes: [Node] = []
 
@@ -25,6 +26,13 @@ struct ContentView: View {
                             .anchorPreference(key: Key.self, value: .center) {
                                 [node.id: $0]
                             }
+                            .background(
+                                GeometryReader { geometryProxy in
+                                    Color.clear.onAppear {
+                                        sizes[node.id, default: .zero] = geometryProxy.size
+                                    }
+                                }
+                            )
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -36,7 +44,9 @@ struct ContentView: View {
                             EdgeView(
                                 edge: edge,
                                 from: proxy[positions[edge.from]!],
-                                to: proxy[positions[edge.to]!]
+                                to: proxy[positions[edge.to]!],
+                                fromNodeSize: sizes[edge.from, default: .zero],
+                                toNodeSize: sizes[edge.to, default: .zero]
                             )
                         }
                     }
@@ -50,31 +60,24 @@ struct ContentView: View {
                 try vm.diagram(for: """
                 node Parser {
                     color: blue
-                    edge Parser -> Lexer { }
-                    edge Parser -> SemanticCheckerImpl {
-                        label: "token"
-                    }
-                    edge Parser -> Index {
-                        label: "index"
-                    }
+                    edge Parser -> Lexer {}
+                    edge Parser -> SemanticChecker { }
+                    edge Parser -> Checker { }
+                    edge Parser -> Type { }
                 }
                 node Lexer {
                     color: orange
-                    edge Lexer -> Token {}
-                    edge Lexer -> Code {}
+                    edge Lexer -> Token { }
+                    edge Lexer -> Some { }
                 }
-                node SemanticCheckerImpl {
-                    color: indigo
-                    edge SemanticCheckerImpl -> Code {}
-                    edge SemanticCheckerImpl -> Type {}
+                node Type {
+                    edge Type -> Something {}
                 }
-                node Token { }
-                node Index { 
-                    edge Index -> Input {}
-                }
-                node Type { color: black }
-                node Code {}
-                node Input {}
+                node SemanticChecker {}
+                node Checker {}
+                node Token {}
+                node Some {}
+                node Something {}
                 """)
             } catch {
                 print(error)
