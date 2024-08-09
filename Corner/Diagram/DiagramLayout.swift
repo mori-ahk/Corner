@@ -8,17 +8,11 @@
 import SwiftUI
 
 struct DiagramLayout: Layout {
+    var nodes: [Node]
+    
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         guard !subviews.isEmpty else { return .zero }
-        
-        let maxSize = maxSize(subviews: subviews)
-        let spacing = spacing(subviews: subviews)
-        let totalSpacing = spacing.reduce(0) { $0 + $1 }
-        
-        return CGSize(
-            width: maxSize.width * CGFloat(subviews.count) + totalSpacing,
-            height: maxSize.height
-        )
+        return proposal.replacingUnspecifiedDimensions()
     }
     
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
@@ -26,16 +20,17 @@ struct DiagramLayout: Layout {
         
         let maxSize = maxSize(subviews: subviews)
         let spacing = spacing(subviews: subviews)
-       
-        let placementProposal = ProposedViewSize(width: maxSize.width, height: maxSize.height)
-        var x = bounds.minX + maxSize.width / 2
         
+        let placementProposal = ProposedViewSize(width: maxSize.width, height: maxSize.height)
+        var x = bounds.minX
         for index in subviews.indices {
+            let numOfEdges = nodes[index].edges.count
+            let y: CGFloat = bounds.minY + CGFloat((40 * numOfEdges))
             subviews[index].place(
-                at: CGPoint(x: x, y: bounds.midY),
-                anchor: .center,
+                at: CGPoint(x: x, y: y),
+                anchor: .leading,
                 proposal: placementProposal)
-            x += maxSize.width + spacing[index]
+            x += maxSize.width + spacing[index] + 12
         }
     }
     
@@ -44,7 +39,8 @@ struct DiagramLayout: Layout {
         let maxSize: CGSize = subviewSizes.reduce(.zero) { currentMax, subviewSize in
             CGSize(
                 width: max(currentMax.width, subviewSize.width),
-                height: max(currentMax.height, subviewSize.height))
+                height: max(currentMax.height, subviewSize.height)
+            )
         }
 
         return maxSize
@@ -55,7 +51,8 @@ struct DiagramLayout: Layout {
             guard index < subviews.count - 1 else { return 0 }
             return subviews[index].spacing.distance(
                 to: subviews[index + 1].spacing,
-                along: .horizontal)
+                along: .horizontal
+            )
         }
     }
 }

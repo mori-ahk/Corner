@@ -9,7 +9,6 @@ import SwiftUI
 
 struct NodeView: View {
     let node: Node
-    @Binding var position: CGPoint
     
     var body: some View {
         Text(node.id)
