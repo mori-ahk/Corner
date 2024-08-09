@@ -50,18 +50,23 @@ struct ContentView: View {
                 try vm.diagram(for: """
                 node Parser {
                     color: blue
-                    edge Parser -> Lexer {}
-                    edge Parser -> Semantic {}
-                    edge Parser -> Index {}
+                    edge Parser -> Lexer { }
+                    edge Parser -> SemanticCheckerImpl {
+                        label: "token"
+                    }
+                    edge Parser -> Index {
+                        label: "index"
+                    }
                 }
                 node Lexer {
                     color: orange
                     edge Lexer -> Token {}
-                }   
-                node Semantic {
+                    edge Lexer -> Code {}
+                }
+                node SemanticCheckerImpl {
                     color: indigo
-                    edge Semantic -> Code {}
-                    edge Semantic -> Type {}
+                    edge SemanticCheckerImpl -> Code {}
+                    edge SemanticCheckerImpl -> Type {}
                 }
                 node Token { }
                 node Index { 

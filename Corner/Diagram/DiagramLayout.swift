@@ -17,10 +17,7 @@ struct DiagramLayout: Layout {
     
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         guard !subviews.isEmpty else { return }
-        
         let maxSize = maxSize(subviews: subviews)
-        let spacing = spacing(subviews: subviews)
-        
         let placementProposal = ProposedViewSize(width: maxSize.width, height: maxSize.height)
         var x = bounds.minX
         var subviewIndex = 0
@@ -28,9 +25,6 @@ struct DiagramLayout: Layout {
         for layer in nodes {
             var y = bounds.minY
             for node in layer {
-                let yOffset = CGFloat(20 * node.edges.count)
-                y += yOffset
-                
                 subviews[subviewIndex].place(
                     at: CGPoint(x: x, y: y),
                     anchor: .leading,
@@ -38,9 +32,21 @@ struct DiagramLayout: Layout {
                 )
                 
                 subviewIndex += 1
-                y += 80
+                if node.edges.isEmpty {
+                    y += 64
+                } else {
+                    y += CGFloat(64 * node.edges.count)
+                }
             }
-            x += maxSize.width + 36
+            let edgeLabelSizes = layer.flatMap { $0.edges.map { $0.label.count } }
+            let maxLabelSize: Double = edgeLabelSizes.reduce(.zero) { currentMax, labelSize in
+                return max(currentMax, Double(labelSize))
+            }
+            if maxLabelSize == .zero {
+                x += maxSize.width + 64
+            } else {
+                x += maxSize.width + CGFloat(64 + (maxLabelSize * 8))
+            }
         }
     }
     
