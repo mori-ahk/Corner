@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DiagramLayout: Layout {
-    var nodes: [Node]
+    var nodes: [[Node]]
     
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         guard !subviews.isEmpty else { return .zero }
@@ -23,14 +23,24 @@ struct DiagramLayout: Layout {
         
         let placementProposal = ProposedViewSize(width: maxSize.width, height: maxSize.height)
         var x = bounds.minX
-        for index in subviews.indices {
-            let numOfEdges = nodes[index].edges.count
-            let y: CGFloat = bounds.minY + CGFloat((40 * numOfEdges))
-            subviews[index].place(
-                at: CGPoint(x: x, y: y),
-                anchor: .leading,
-                proposal: placementProposal)
-            x += maxSize.width + spacing[index] + 12
+        var subviewIndex = 0
+        
+        for layer in nodes {
+            var y = bounds.minY
+            for node in layer {
+                let yOffset = CGFloat(20 * node.edges.count)
+                y += yOffset
+                
+                subviews[subviewIndex].place(
+                    at: CGPoint(x: x, y: y),
+                    anchor: .leading,
+                    proposal: placementProposal
+                )
+                
+                subviewIndex += 1
+                y += 80
+            }
+            x += maxSize.width + 36
         }
     }
     

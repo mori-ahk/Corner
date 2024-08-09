@@ -23,7 +23,6 @@ class DiagramViewModel: ObservableObject {
                 let parsedNodes = children.filter { $0.isNode }
                 let nodes: [Node] = parsedNodes.compactMap { Node(from: $0) }
                 self.diagram = Diagram(nodes: nodes)
-                dump(diagram)
             default: break
             }
         } catch {
