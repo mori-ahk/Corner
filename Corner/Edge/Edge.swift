@@ -15,9 +15,7 @@ struct Edge: Identifiable, Equatable {
     var color: Color
     var label: String
     
-    init?(from astEdge: ASTNode) {
-        guard !astEdge.isNode else { return nil }
-        guard case let .edge(edgeDecl) = astEdge else { return nil }
+    init?(from edgeDecl: ASTNode.EdgeDecl) {
         self.from = edgeDecl.from
         self.to = edgeDecl.to
         self.color = .black

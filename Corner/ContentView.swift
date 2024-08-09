@@ -10,15 +10,35 @@ import CornerParser
 
 struct ContentView: View {
     @StateObject private var vm = DiagramViewModel()
-    @State private var positions: [CGPoint] = []
-    @State private var diagram: Diagram?
+    @State private var positions: [Node.ID : Anchor<CGPoint>] = [:]
+    @State private var layeredNodes: [[Node]] = []
+    @State private var nodes: [Node] = []
+
+    typealias Key = CollectDictPrefKey<Node.ID, Anchor<CGPoint>>
     
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            if let diagram {
-                DiagramLayout {
-                    ForEach(Array(diagram.nodes.enumerated()), id: \.element.id) { index, element in
-                        NodeView(node: element, position: $positions[index])
+        GeometryReader { proxy in
+            ZStack(alignment: .topLeading) {
+                DiagramLayout(nodes: layeredNodes) {
+                    ForEach(Array(nodes.enumerated()), id: \.element.id) { index, node in
+                        NodeView(node: node)
+                            .anchorPreference(key: Key.self, value: .center) {
+                                [node.id: $0]
+                            }
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .padding()
+                
+                if !positions.isEmpty {
+                    ForEach(nodes) { node in
+                        ForEach(Array(node.edges.enumerated()), id: \.element.id) { index, edge in
+                            EdgeView(
+                                edge: edge,
+                                from: proxy[positions[edge.from]!],
+                                to: proxy[positions[edge.to]!]
+                            )
+                        }
                     }
                 }
             }
@@ -28,32 +48,42 @@ struct ContentView: View {
         .onAppear {
             do {
                 try vm.diagram(for: """
-                node Parser { color: blue }
-                node Lexer { color: orange }
-                node SemanticAnalyzer { color: green }
-                node TypeChecker { color: mint }
-
-                edge A -> B { label: "eddge" }
+                node Parser {
+                    color: blue
+                    edge Parser -> Lexer {}
+                    edge Parser -> Semantic {}
+                    edge Parser -> Index {}
+                }
+                node Lexer {
+                    color: orange
+                    edge Lexer -> Token {}
+                }   
+                node Semantic {
+                    color: indigo
+                    edge Semantic -> Code {}
+                    edge Semantic -> Type {}
+                }
+                node Token { }
+                node Index { 
+                    edge Index -> Input {}
+                }
+                node Type { color: black }
+                node Code {}
+                node Input {}
                 """)
             } catch {
                 print(error)
             }
         }
         .onReceive(vm.$diagram) { newDiagram in
-            self.diagram = newDiagram
-            positions.removeAll(keepingCapacity: true)
-            positions = Array(repeating: .zero, count: diagram?.nodes.count ?? .zero)
+            self.layeredNodes = newDiagram?.layeredNodes() ?? []
+            self.nodes = newDiagram?.flattenLayeredNodes() ?? []
         }
-        .coordinateSpace(.named("Diagram"))
-        .animation(.default, value: diagram)
-    }
-}
-
-struct PositionPreferenceKey: PreferenceKey {
-    static var defaultValue: CGPoint = .zero
-    
-    static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
-        value = nextValue()
+        .onPreferenceChange(Key.self) { value in
+            self.positions = value
+        }
+        .animation(.default, value: nodes)
+        .animation(.default, value: layeredNodes)
     }
 }
 

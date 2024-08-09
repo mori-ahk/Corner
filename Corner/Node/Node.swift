@@ -11,12 +11,15 @@ import CornerParser
 struct Node: Identifiable, Equatable {
     var id: String
     var color: Color
+    var edges: [Edge]
     
     init?(from astNode: ASTNode) {
         guard astNode.isNode else { return nil }
         guard case let .node(nodeDecl) = astNode else { return nil }
         self.id = nodeDecl.id
         self.color = .black
+        self.edges = nodeDecl.edges.compactMap { Edge(from: $0) }
+        
         if let attribute = nodeDecl.attribute {
             guard case let .color(colorString) = attribute else {
                 self.color = [Color.blue, Color.orange, Color.green, Color.indigo].randomElement()!

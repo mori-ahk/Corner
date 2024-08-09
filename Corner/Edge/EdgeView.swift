@@ -9,18 +9,18 @@ import SwiftUI
 
 struct EdgeView: View {
     let edge: Edge
-    let fromPosition: CGPoint
-    let toPosition: CGPoint
+    let from: CGPoint
+    let to: CGPoint
 
     var body: some View {
         Path { path in
-            path.move(to: fromPosition)
-            path.addLine(to: toPosition)
+            path.move(to: from)
+            path.addLine(to: to)
         }
         .stroke(edge.color, lineWidth: 2)
         .overlay(
             Text(edge.label)
-                .position(x: (fromPosition.x + toPosition.x) / 2, y: (fromPosition.y + toPosition.y) / 2)
+                .position(x: (from.x + to.x) / 2, y: (from.y + to.y) / 2)
         )
     }
 }

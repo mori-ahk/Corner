@@ -21,12 +21,8 @@ class DiagramViewModel: ObservableObject {
             switch ast {
             case .diagram(let children):
                 let parsedNodes = children.filter { $0.isNode }
-                let parsedEdges = children.filter { !$0.isNode }
-                
                 let nodes: [Node] = parsedNodes.compactMap { Node(from: $0) }
-                let edges: [Edge] = parsedEdges.compactMap { Edge(from: $0) }
-                self.diagram = Diagram(nodes: nodes, edges: edges)
-                dump(diagram)
+                self.diagram = Diagram(nodes: nodes)
             default: break
             }
         } catch {
