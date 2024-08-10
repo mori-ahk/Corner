@@ -17,8 +17,8 @@ struct NodeView: View {
             .foregroundColor(node.color)
             .background {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(node.color.opacity(0.1))
-                    .stroke(node.color, lineWidth: 2)
+                    .fill(.background)
+                    .shadow(color: node.color.opacity(0.33), radius: 4)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
     }

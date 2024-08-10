@@ -44,6 +44,9 @@ struct Node: Identifiable, Equatable {
         case "black": .black
         case "white": .white
         case "mint": .mint
+        case "cyan": .cyan
+        case "purple": .purple
+        case "pink": .pink
         default: .teal
         }
     }

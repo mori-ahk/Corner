@@ -72,12 +72,14 @@ struct ContentView: View {
                 }
                 node Type {
                     edge Type -> Something {}
+                    edge Type -> CodeGen {}
                 }
                 node SemanticChecker {}
                 node Checker {}
-                node Token {}
-                node Some {}
-                node Something {}
+                node Token { color: mint }
+                node Some { color: cyan }
+                node Something { color: pink }
+                node CodeGen { color: purple }
                 """)
             } catch {
                 print(error)
