@@ -46,7 +46,9 @@ struct ContentView: View {
                                 from: proxy[positions[edge.from]!],
                                 to: proxy[positions[edge.to]!],
                                 fromNodeSize: sizes[edge.from, default: .zero],
-                                toNodeSize: sizes[edge.to, default: .zero]
+                                toNodeSize: sizes[edge.to, default: .zero],
+                                fromColor: node.color,
+                                toColor: nodes.first { $0.id == edge.to }!.color
                             )
                         }
                     }
@@ -54,32 +56,33 @@ struct ContentView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding()
+        .padding(24)
         .onAppear {
             do {
                 try vm.diagram(for: """
-                node Parser {
+                node Compiler {
                     color: blue
-                    edge Parser -> Lexer {}
-                    edge Parser -> SemanticChecker { }
-                    edge Parser -> Checker { }
-                    edge Parser -> Type { }
+                    edge Compiler -> Lexer {
+                        label: "input"
+                    }
                 }
+                
                 node Lexer {
-                    color: orange
-                    edge Lexer -> Token { }
-                    edge Lexer -> Some { }
+                    color: green
+                    edge Lexer -> Parser { label: "token" }
                 }
-                node Type {
-                    edge Type -> Something {}
-                    edge Type -> CodeGen {}
+                
+                node Parser {
+                    color: indigo
+                    edge Parser -> SemanticChecker { label: "AST" }
+                    edge Parser -> TypeChecker { label: "AST" }
+                    edge Parser -> CodeGenerator { label: "AST" }
                 }
-                node SemanticChecker {}
-                node Checker {}
-                node Token { color: mint }
-                node Some { color: cyan }
-                node Something { color: pink }
-                node CodeGen { color: purple }
+                
+                node SemanticChecker { color: red }
+                node TypeChecker { color: yellow }
+                node CodeGenerator { color: brown }
+                node X {}
                 """)
             } catch {
                 print(error)

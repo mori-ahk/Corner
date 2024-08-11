@@ -13,26 +13,68 @@ struct EdgeView: View {
     let to: CGPoint
     let fromNodeSize: CGSize
     let toNodeSize: CGSize
+    let fromColor: Color
+    let toColor: Color
 
     var body: some View {
-        Path { path in
+        ZStack {
             let startPoint = adjustedPoint(for: from, nodeSize: fromNodeSize, placement: edge.placement)
             let endPoint = adjustedPoint(for: to, nodeSize: toNodeSize, placement: edge.placement.opposite)
-
-            path.move(to: startPoint)
-            if to.y != from.y {
-                switch edge.placement {
-                case .trailing:
-                    path.addLine(to: CGPoint(x: startPoint.x + 16, y: startPoint.y))
-                    path.addLine(to: CGPoint(x: startPoint.x + 16, y: to.y))
-                default:
-                    path.addLine(to: CGPoint(x: startPoint.x, y: to.y))
+            Path { path in
+                path.move(to: startPoint)
+                if to.y != from.y {
+                    switch edge.placement {
+                    case .trailing:
+                        path.addLine(to: CGPoint(x: startPoint.x + 16, y: startPoint.y))
+                        path.addLine(to: CGPoint(x: startPoint.x + 16, y: to.y))
+                    case .leading:
+                        path.addLine(to: CGPoint(x: startPoint.x - 16, y: startPoint.y))
+                        path.addLine(to: CGPoint(x: startPoint.x - 16, y: to.y))
+                    case .topLeading:
+                        path.addLine(to: CGPoint(x: startPoint.x - 24, y: startPoint.y))
+                        path.addLine(to: CGPoint(x: startPoint.x - 24, y: to.y))
+                    case .top:
+                        path.addLine(to: CGPoint(x: startPoint.x, y: startPoint.y - 16))
+                        path.addLine(to: CGPoint(x: startPoint.x - (fromNodeSize.width / 2) - 24, y: startPoint.y - 16))
+                        path.addLine(to: CGPoint(x: startPoint.x - (fromNodeSize.width / 2) - 24, y: to.y))
+                    default:
+                        path.addLine(to: CGPoint(x: startPoint.x, y: to.y))
+                    }
                 }
+                path.addLine(to: endPoint)
             }
-            path.addLine(to: endPoint)
+            .stroke(
+                fromColor.opacity(0.5),
+                style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round)
+            )
+            .overlay(edgeLabel)
+            
+            ZStack {
+                Circle()
+                    .fill(fromColor.opacity(0.1))
+                    .frame(width: 12, height: 12)
+                    .position(startPoint)
+                
+                Circle()
+                    .fill(fromColor.opacity(0.75))
+                    .frame(width: 6, height: 6)
+                    .position(startPoint)
+
+            }
+            
+            ZStack {
+                Circle()
+                    .fill(toColor.opacity(0.1))
+                    .frame(width: 12, height: 12)
+                    .position(endPoint)
+                
+                Circle()
+                    .fill(toColor.opacity(0.75))
+                    .frame(width: 6, height: 6)
+                    .position(endPoint)
+
+            }
         }
-        .stroke(edge.color.opacity(0.4), style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
-        .overlay(edgeLabel)
     }
 
     private func adjustedPoint(for point: CGPoint, nodeSize: CGSize, placement: EdgePlacement) -> CGPoint {
@@ -49,7 +91,7 @@ struct EdgeView: View {
         case .bottomTrailing:
             offset = CGPoint(x: halfWidth, y: halfHeight)
         case .bottom:
-            offset = CGPoint(x: 0, y: halfHeight)
+            offset = CGPoint(x: 0, y: halfHeight + 2)
         case .bottomLeading:
             offset = CGPoint(x: -halfWidth, y: halfHeight)
         case .leading:
@@ -64,14 +106,15 @@ struct EdgeView: View {
     }
 
     private var edgeLabel: some View {
-        Group {
+        let yPosition = edge.placement == .topTrailing ? (to.y / 2) - 8 : to.y
+        return Group {
             if !edge.label.isEmpty {
                 Text(edge.label)
                     .padding(8)
-                    .background(Color.white)
+                    .background(.background)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .shadow(radius: 4)
-                    .position(x: (from.x + to.x) / 2, y: to.y)
+                    .position(x: (from.x + to.x) / 2, y: yPosition)
             }
         }
     }

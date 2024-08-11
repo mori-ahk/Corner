@@ -36,7 +36,6 @@ extension Diagram {
                 }
             }
            
-            nextLayer = nextLayer.sorted { $0.edges.count > $1.edges.count }
             currentLayer = nextLayer
         }
         
