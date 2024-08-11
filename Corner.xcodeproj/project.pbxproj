@@ -127,8 +127,7 @@
 				8273F66E2C6262B400B589A7 /* Edge */,
 				8273F6712C6262DD00B589A7 /* Diagram */,
 				829DFA612C62B912005E4671 /* CollectDictPrefKey.swift */,
-				829DFA632C693368005E4671 /* InputTextView.swift */,
-				829DFA652C6933D2005E4671 /* InputActionButton.swift */,
+				829DFA672C6952DF005E4671 /* InputView */,
 			);
 			path = Corner;
 			sourceTree = "<group>";
@@ -191,6 +190,15 @@
 			children = (
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		829DFA672C6952DF005E4671 /* InputView */ = {
+			isa = PBXGroup;
+			children = (
+				829DFA632C693368005E4671 /* InputTextView.swift */,
+				829DFA652C6933D2005E4671 /* InputActionButton.swift */,
+			);
+			path = InputView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
