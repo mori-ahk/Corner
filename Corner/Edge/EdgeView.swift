@@ -106,7 +106,7 @@ struct EdgeView: View {
     }
 
     private var edgeLabel: some View {
-        let yPosition = edge.placement == .topTrailing ? (to.y / 2) - 8 : to.y
+        let yPosition = edge.placement == .topTrailing ? (to.y / 2) - 16 : to.y
         return Group {
             if !edge.label.isEmpty {
                 Text(edge.label)

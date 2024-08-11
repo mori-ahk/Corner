@@ -12,91 +12,114 @@ struct ContentView: View {
     @StateObject private var vm = DiagramViewModel()
     @State private var positions: [Node.ID : Anchor<CGPoint>] = [:]
     @State private var sizes: [Node.ID : CGSize] = [:]
+    @State private var diagram: Diagram?
     @State private var layeredNodes: [[Node]] = []
     @State private var nodes: [Node] = []
-
-    typealias Key = CollectDictPrefKey<Node.ID, Anchor<CGPoint>>
+    @State private var input: String = ""
+    
+    private typealias Key = CollectDictPrefKey<Node.ID, Anchor<CGPoint>>
     
     var body: some View {
-        GeometryReader { proxy in
-            ZStack(alignment: .topLeading) {
-                DiagramLayout(nodes: layeredNodes) {
-                    ForEach(Array(nodes.enumerated()), id: \.element.id) { index, node in
-                        NodeView(node: node)
-                            .anchorPreference(key: Key.self, value: .center) {
-                                [node.id: $0]
-                            }
-                            .background(
-                                GeometryReader { geometryProxy in
-                                    Color.clear.onAppear {
-                                        sizes[node.id, default: .zero] = geometryProxy.size
-                                    }
-                                }
-                            )
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .padding()
-                
-                if !positions.isEmpty {
-                    ForEach(nodes) { node in
-                        ForEach(Array(node.edges.enumerated()), id: \.element.id) { index, edge in
-                            EdgeView(
-                                edge: edge,
-                                from: proxy[positions[edge.from]!],
-                                to: proxy[positions[edge.to]!],
-                                fromNodeSize: sizes[edge.from, default: .zero],
-                                toNodeSize: sizes[edge.to, default: .zero],
-                                fromColor: node.color,
-                                toColor: nodes.first { $0.id == edge.to }!.color
-                            )
-                        }
-                    }
-                }
-            }
+        HStack {
+            inputSection
+            diagramSection
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding(24)
-        .onAppear {
-            do {
-                try vm.diagram(for: """
-                node Compiler {
-                    color: blue
-                    edge Compiler -> Lexer {
-                        label: "input"
-                    }
-                }
-                
-                node Lexer {
-                    color: green
-                    edge Lexer -> Parser { label: "token" }
-                }
-                
-                node Parser {
-                    color: indigo
-                    edge Parser -> SemanticChecker { label: "AST" }
-                    edge Parser -> TypeChecker { label: "AST" }
-                    edge Parser -> CodeGenerator { label: "AST" }
-                }
-                
-                node SemanticChecker { color: red }
-                node TypeChecker { color: yellow }
-                node CodeGenerator { color: brown }
-                node X {}
-                """)
-            } catch {
-                print(error)
-            }
-        }
         .onReceive(vm.$diagram) { newDiagram in
-            self.layeredNodes = newDiagram?.layeredNodes() ?? []
-            self.nodes = newDiagram?.flattenLayeredNodes() ?? []
+            self.diagram = newDiagram
         }
-        .onPreferenceChange(Key.self) { value in
-            self.positions = value
+        .onChange(of: diagram) { oldValue, newValue in
+            if newValue == nil { positions.removeAll() }
+            layeredNodes = newValue?.layeredNodes() ?? []
+            nodes = newValue?.flattenLayeredNodes() ?? []
         }
+        .onPreferenceChange(Key.self) {
+            self.positions = $0
+        }
+        
         .animation(.default, value: nodes)
         .animation(.default, value: layeredNodes)
+        .animation(.default, value: positions)
+    }
+    
+    private var inputSection: some View {
+        VStack(alignment: .leading) {
+            Text("Start diagram here:")
+                .font(.headline)
+                .fontWeight(.semibold)
+            InputTextView(
+                text: $input,
+                textColor: .black
+            )
+            Divider()
+            actionButtons
+        }
+        .frame(maxWidth: 350, alignment: .topLeading)
+        .padding()
+        .background(.background)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .shadow(color: .gray.opacity(0.15), radius: 12)
+    }
+    
+    private var actionButtons: some View {
+        HStack {
+            ActionButton(title: "Generate", color: .blue) {
+                do {
+                    try vm.diagram(for: input)
+                } catch { print(error) }
+            }
+            
+            ActionButton(title: "Clear", color: .red) {
+                self.diagram = nil
+            }
+        }
+    }
+    
+    private var diagramSection: some View {
+        GeometryReader { proxy in
+            ZStack(alignment: .topLeading) {
+                diagramLayout
+                if !positions.isEmpty { edgesLayer(in: proxy) }
+            }
+        }
+        .padding(24)
+    }
+    
+    private var diagramLayout: some View {
+        DiagramLayout(nodes: layeredNodes) {
+            ForEach(nodes, id: \.id) { node in
+                NodeView(node: node)
+                    .anchorPreference(key: Key.self, value: .center) { [node.id: $0] }
+                    .background(
+                        GeometryReader { geometryProxy in
+                            Color.clear.onAppear {
+                                sizes[node.id, default: .zero] = geometryProxy.size
+                            }
+                        }
+                    )
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func edgesLayer(in proxy: GeometryProxy) -> some View {
+        ForEach(nodes) { node in
+            ForEach(node.edges, id: \.id) { edge in
+                if let fromAnchor = positions[edge.from],
+                   let toAnchor = positions[edge.to],
+                   let toNode = nodes.first(where: { $0.id == edge.to }) {
+                    EdgeView(
+                        edge: edge,
+                        from: proxy[fromAnchor],
+                        to: proxy[toAnchor],
+                        fromNodeSize: sizes[edge.from, default: .zero],
+                        toNodeSize: sizes[edge.to, default: .zero],
+                        fromColor: node.color,
+                        toColor: toNode.color
+                    )
+                }
+            }
+        }
     }
 }
-
