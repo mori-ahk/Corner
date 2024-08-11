@@ -13,12 +13,12 @@ struct NodeView: View {
     var body: some View {
         Text(node.id)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding()
+            .padding(UXMetrics.Padding.twenty)
             .foregroundColor(node.color)
             .background {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.eight)
                     .fill(.background)
-                    .shadow(color: node.color.opacity(0.33), radius: 4)
+                    .shadow(color: node.color.opacity(0.33), radius: UXMetrics.ShadowRadius.four)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
     }
