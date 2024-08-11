@@ -35,7 +35,7 @@ extension Diagram {
                     }
                 }
             }
-            
+           
             currentLayer = nextLayer
         }
         

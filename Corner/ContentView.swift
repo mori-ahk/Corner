@@ -11,6 +11,7 @@ import CornerParser
 struct ContentView: View {
     @StateObject private var vm = DiagramViewModel()
     @State private var positions: [Node.ID : Anchor<CGPoint>] = [:]
+    @State private var sizes: [Node.ID : CGSize] = [:]
     @State private var layeredNodes: [[Node]] = []
     @State private var nodes: [Node] = []
 
@@ -25,6 +26,13 @@ struct ContentView: View {
                             .anchorPreference(key: Key.self, value: .center) {
                                 [node.id: $0]
                             }
+                            .background(
+                                GeometryReader { geometryProxy in
+                                    Color.clear.onAppear {
+                                        sizes[node.id, default: .zero] = geometryProxy.size
+                                    }
+                                }
+                            )
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -36,7 +44,11 @@ struct ContentView: View {
                             EdgeView(
                                 edge: edge,
                                 from: proxy[positions[edge.from]!],
-                                to: proxy[positions[edge.to]!]
+                                to: proxy[positions[edge.to]!],
+                                fromNodeSize: sizes[edge.from, default: .zero],
+                                toNodeSize: sizes[edge.to, default: .zero],
+                                fromColor: node.color,
+                                toColor: nodes.first { $0.id == edge.to }!.color
                             )
                         }
                     }
@@ -44,32 +56,33 @@ struct ContentView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding()
+        .padding(24)
         .onAppear {
             do {
                 try vm.diagram(for: """
-                node Parser {
+                node Compiler {
                     color: blue
-                    edge Parser -> Lexer {}
-                    edge Parser -> Semantic {}
-                    edge Parser -> Index {}
+                    edge Compiler -> Lexer {
+                        label: "input"
+                    }
                 }
+                
                 node Lexer {
-                    color: orange
-                    edge Lexer -> Token {}
-                }   
-                node Semantic {
+                    color: green
+                    edge Lexer -> Parser { label: "token" }
+                }
+                
+                node Parser {
                     color: indigo
-                    edge Semantic -> Code {}
-                    edge Semantic -> Type {}
+                    edge Parser -> SemanticChecker { label: "AST" }
+                    edge Parser -> TypeChecker { label: "AST" }
+                    edge Parser -> CodeGenerator { label: "AST" }
                 }
-                node Token { }
-                node Index { 
-                    edge Index -> Input {}
-                }
-                node Type { color: black }
-                node Code {}
-                node Input {}
+                
+                node SemanticChecker { color: red }
+                node TypeChecker { color: yellow }
+                node CodeGenerator { color: brown }
+                node X {}
                 """)
             } catch {
                 print(error)
