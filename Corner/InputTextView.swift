@@ -10,7 +10,6 @@ import SwiftUI
 
 struct InputTextView: NSViewRepresentable {
     @Binding var text: String
-    var placeholder: String
     var textColor: NSColor
     
     class Coordinator: NSObject, NSTextViewDelegate {

@@ -50,13 +50,12 @@ struct ContentView: View {
                 .fontWeight(.semibold)
             InputTextView(
                 text: $input,
-                placeholder: "Enter text here...",
                 textColor: .black
             )
             Divider()
             actionButtons
         }
-        .frame(maxWidth: 300, alignment: .topLeading)
+        .frame(maxWidth: 350, alignment: .topLeading)
         .padding()
         .background(.background)
         .clipShape(RoundedRectangle(cornerRadius: 12))
