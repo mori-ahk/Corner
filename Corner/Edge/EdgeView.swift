@@ -110,10 +110,10 @@ struct EdgeView: View {
         return Group {
             if !edge.label.isEmpty {
                 Text(edge.label)
-                    .padding(8)
+                    .padding(UXMetrics.Padding.eight)
                     .background(.background)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .shadow(radius: 4)
+                    .clipShape(RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.eight))
+                    .shadow(radius: UXMetrics.ShadowRadius.four)
                     .position(x: (from.x + to.x) / 2, y: yPosition)
             }
         }

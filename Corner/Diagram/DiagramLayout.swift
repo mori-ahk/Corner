@@ -39,13 +39,11 @@ struct DiagramLayout: Layout {
                 }
             }
             let edgeLabelSizes = layer.flatMap { $0.edges.map { $0.label.count } }
-            let maxLabelSize: Double = edgeLabelSizes.reduce(.zero) { currentMax, labelSize in
-                return max(currentMax, Double(labelSize))
-            }
+            let maxLabelSize: Double = Double(edgeLabelSizes.max() ?? .zero)
             if maxLabelSize == .zero {
                 x += maxSize.width + 64
             } else {
-                x += maxSize.width + CGFloat(64 + (maxLabelSize * 8))
+                x += maxSize.width + CGFloat(64 + (maxLabelSize * UXMetrics.Padding.four))
             }
         }
     }

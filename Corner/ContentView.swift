@@ -25,7 +25,7 @@ struct ContentView: View {
             diagramSection
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding(24)
+        .padding(UXMetrics.Padding.twentyFour)
         .onReceive(vm.$diagram) { newDiagram in
             self.diagram = newDiagram
         }
@@ -37,10 +37,7 @@ struct ContentView: View {
         .onPreferenceChange(Key.self) {
             self.positions = $0
         }
-        
-        .animation(.default, value: nodes)
-        .animation(.default, value: layeredNodes)
-        .animation(.default, value: positions)
+        .animation(.default, value: diagram)
     }
     
     private var inputSection: some View {
@@ -58,8 +55,8 @@ struct ContentView: View {
         .frame(maxWidth: 350, alignment: .topLeading)
         .padding()
         .background(.background)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .gray.opacity(0.15), radius: 12)
+        .clipShape(RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.twelve))
+        .shadow(color: .gray.opacity(0.15), radius: UXMetrics.ShadowRadius.twelve)
     }
     
     private var actionButtons: some View {
@@ -80,15 +77,15 @@ struct ContentView: View {
         GeometryReader { proxy in
             ZStack(alignment: .topLeading) {
                 diagramLayout
-                if !positions.isEmpty { edgesLayer(in: proxy) }
+                edgesLayer(in: proxy)
             }
         }
-        .padding(24)
+        .padding(UXMetrics.Padding.twentyFour)
     }
     
     private var diagramLayout: some View {
         DiagramLayout(nodes: layeredNodes) {
-            ForEach(nodes, id: \.id) { node in
+            ForEach(nodes) { node in
                 NodeView(node: node)
                     .anchorPreference(key: Key.self, value: .center) { [node.id: $0] }
                     .background(
@@ -105,7 +102,7 @@ struct ContentView: View {
     @ViewBuilder
     private func edgesLayer(in proxy: GeometryProxy) -> some View {
         ForEach(nodes) { node in
-            ForEach(node.edges, id: \.id) { edge in
+            ForEach(node.edges) { edge in
                 if let fromAnchor = positions[edge.from],
                    let toAnchor = positions[edge.to],
                    let toNode = nodes.first(where: { $0.id == edge.to }) {

@@ -25,6 +25,7 @@
 		829DFA622C62B912005E4671 /* CollectDictPrefKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829DFA612C62B912005E4671 /* CollectDictPrefKey.swift */; };
 		829DFA642C693368005E4671 /* InputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829DFA632C693368005E4671 /* InputTextView.swift */; };
 		829DFA662C6933D2005E4671 /* InputActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829DFA652C6933D2005E4671 /* InputActionButton.swift */; };
+		829DFA6A2C69532B005E4671 /* UXMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829DFA692C69532B005E4671 /* UXMetrics.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +67,7 @@
 		829DFA612C62B912005E4671 /* CollectDictPrefKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectDictPrefKey.swift; sourceTree = "<group>"; };
 		829DFA632C693368005E4671 /* InputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextView.swift; sourceTree = "<group>"; };
 		829DFA652C6933D2005E4671 /* InputActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputActionButton.swift; sourceTree = "<group>"; };
+		829DFA692C69532B005E4671 /* UXMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UXMetrics.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,7 +119,6 @@
 		826FF02D2C60580A00559DED /* Corner */ = {
 			isa = PBXGroup;
 			children = (
-				8273F6742C62672800B589A7 /* ViewModel */,
 				826FF02E2C60580A00559DED /* CornerApp.swift */,
 				826FF0302C60580A00559DED /* ContentView.swift */,
 				826FF0322C60580B00559DED /* Assets.xcassets */,
@@ -126,7 +127,7 @@
 				8273F66B2C62628100B589A7 /* Node */,
 				8273F66E2C6262B400B589A7 /* Edge */,
 				8273F6712C6262DD00B589A7 /* Diagram */,
-				829DFA612C62B912005E4671 /* CollectDictPrefKey.swift */,
+				829DFA682C695322005E4671 /* Util */,
 				829DFA672C6952DF005E4671 /* InputView */,
 			);
 			path = Corner;
@@ -185,13 +186,6 @@
 			path = Diagram;
 			sourceTree = "<group>";
 		};
-		8273F6742C62672800B589A7 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
 		829DFA672C6952DF005E4671 /* InputView */ = {
 			isa = PBXGroup;
 			children = (
@@ -199,6 +193,15 @@
 				829DFA652C6933D2005E4671 /* InputActionButton.swift */,
 			);
 			path = InputView;
+			sourceTree = "<group>";
+		};
+		829DFA682C695322005E4671 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				829DFA612C62B912005E4671 /* CollectDictPrefKey.swift */,
+				829DFA692C69532B005E4671 /* UXMetrics.swift */,
+			);
+			path = Util;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -339,6 +342,7 @@
 			files = (
 				829DFA662C6933D2005E4671 /* InputActionButton.swift in Sources */,
 				8273F6762C62673B00B589A7 /* DiagramViewModel.swift in Sources */,
+				829DFA6A2C69532B005E4671 /* UXMetrics.swift in Sources */,
 				8273F6662C62621D00B589A7 /* Node.swift in Sources */,
 				8273F6732C6262E600B589A7 /* DiagramLayout.swift in Sources */,
 				826FF0312C60580A00559DED /* ContentView.swift in Sources */,
