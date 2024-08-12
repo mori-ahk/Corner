@@ -12,6 +12,8 @@ struct NodeView: View {
     
     var body: some View {
         Text(node.id)
+            .font(.subheadline)
+            .fontWeight(.semibold)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(UXMetrics.Padding.twenty)
             .foregroundColor(node.color)
