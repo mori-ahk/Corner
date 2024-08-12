@@ -18,37 +18,37 @@ struct EdgeView: View {
 
     var body: some View {
         ZStack {
-            let startPoint = adjustedPoint(for: from, nodeSize: fromNodeSize, placement: edge.placement)
-            let endPoint = adjustedPoint(for: to, nodeSize: toNodeSize, placement: edge.placement.opposite)
+            let startPoint = adjustedPoint(for: fromCenter, nodeSize: fromNodeSize, placement: edge.placement)
+            let endPoint = adjustedPoint(for: toCenter, nodeSize: toNodeSize, placement: edge.placement.opposite)
             Path { path in
                 path.move(to: startPoint)
                 if to.y != from.y {
                     switch edge.placement {
                     case .trailing:
-                        path.addLine(to: CGPoint(x: startPoint.x + 16, y: startPoint.y))
-                        path.addLine(to: CGPoint(x: startPoint.x + 16, y: to.y))
+                        path.addLine(to: CGPoint(x: startPoint.x + 16, y: fromCenter.y))
+                        path.addLine(to: CGPoint(x: startPoint.x + 16, y: toCenter.y))
                     case .leading:
-                        path.addLine(to: CGPoint(x: startPoint.x - 16, y: startPoint.y))
-                        path.addLine(to: CGPoint(x: startPoint.x - 16, y: to.y))
+                        path.addLine(to: CGPoint(x: startPoint.x - 16, y: fromCenter.y))
+                        path.addLine(to: CGPoint(x: startPoint.x - 16, y: toCenter.y))
                     case .topLeading:
-                        path.addLine(to: CGPoint(x: startPoint.x - 24, y: startPoint.y))
-                        path.addLine(to: CGPoint(x: startPoint.x - 24, y: to.y))
+                        path.addLine(to: CGPoint(x: startPoint.x - 24, y: fromCenter.y))
+                        path.addLine(to: CGPoint(x: startPoint.x - 24, y: toCenter.y))
                     case .top:
                         path.addLine(to: CGPoint(x: startPoint.x, y: startPoint.y - 16))
                         path.addLine(to: CGPoint(x: startPoint.x - (fromNodeSize.width / 2) - 24, y: startPoint.y - 16))
-                        path.addLine(to: CGPoint(x: startPoint.x - (fromNodeSize.width / 2) - 24, y: to.y))
+                        path.addLine(to: CGPoint(x: startPoint.x - (fromNodeSize.width / 2) - 24, y: toCenter.y))
                     default:
-                        path.addLine(to: CGPoint(x: startPoint.x, y: to.y))
+                        path.addLine(to: CGPoint(x: startPoint.x, y: toCenter.y))
                     }
                 }
                 path.addLine(to: endPoint)
             }
             .stroke(
-                fromColor.opacity(0.5),
+                fromColor.opacity(0.75),
                 style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round)
             )
             .overlay(edgeLabel)
-            
+
             ZStack {
                 Circle()
                     .fill(fromColor.opacity(0.1))
@@ -106,7 +106,7 @@ struct EdgeView: View {
     }
 
     private var edgeLabel: some View {
-        let yPosition = edge.placement == .topTrailing ? (to.y / 2) - 16 : to.y
+        let yPosition = edge.placement == .topTrailing ? (toCenter.y / 2) - 20 : toCenter.y
         return Group {
             if !edge.label.isEmpty {
                 Text(edge.label)
@@ -114,9 +114,17 @@ struct EdgeView: View {
                     .background(.background)
                     .clipShape(RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.eight))
                     .shadow(radius: UXMetrics.ShadowRadius.four)
-                    .position(x: (from.x + to.x) / 2, y: yPosition)
+                    .position(x: (fromCenter.x + toCenter.x) / 2, y: yPosition)
             }
         }
+    }
+    
+    private var fromCenter: CGPoint {
+        CGPoint(x: from.x + fromNodeSize.width / 2, y: from.y + fromNodeSize.height / 2)
+    }
+    
+    private var toCenter: CGPoint {
+        CGPoint(x: to.x + toNodeSize.width / 2, y: to.y + toNodeSize.height / 2)
     }
 }
 
