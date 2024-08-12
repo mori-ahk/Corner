@@ -26,6 +26,7 @@
 		829DFA642C693368005E4671 /* InputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829DFA632C693368005E4671 /* InputTextView.swift */; };
 		829DFA662C6933D2005E4671 /* InputActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829DFA652C6933D2005E4671 /* InputActionButton.swift */; };
 		829DFA6A2C69532B005E4671 /* UXMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829DFA692C69532B005E4671 /* UXMetrics.swift */; };
+		829DFA6C2C6A804B005E4671 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829DFA6B2C6A804B005E4671 /* Color+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +69,7 @@
 		829DFA632C693368005E4671 /* InputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextView.swift; sourceTree = "<group>"; };
 		829DFA652C6933D2005E4671 /* InputActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputActionButton.swift; sourceTree = "<group>"; };
 		829DFA692C69532B005E4671 /* UXMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UXMetrics.swift; sourceTree = "<group>"; };
+		829DFA6B2C6A804B005E4671 /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -200,6 +202,7 @@
 			children = (
 				829DFA612C62B912005E4671 /* CollectDictPrefKey.swift */,
 				829DFA692C69532B005E4671 /* UXMetrics.swift */,
+				829DFA6B2C6A804B005E4671 /* Color+Extensions.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -351,6 +354,7 @@
 				8273F66D2C6262A300B589A7 /* NodeView.swift in Sources */,
 				8273F6682C62624400B589A7 /* Edge.swift in Sources */,
 				8273F66A2C62626300B589A7 /* Diagram.swift in Sources */,
+				829DFA6C2C6A804B005E4671 /* Color+Extensions.swift in Sources */,
 				826FF02F2C60580A00559DED /* CornerApp.swift in Sources */,
 				829DFA622C62B912005E4671 /* CollectDictPrefKey.swift in Sources */,
 			);
