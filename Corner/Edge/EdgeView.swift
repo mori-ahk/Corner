@@ -115,38 +115,40 @@ struct EdgeView: View {
     }
 
     private var firstIntermediatePoint: CGPoint {
-        let start = adjustedPoints.start
+        let xStart = adjustedPoints.start.x
+        let yStart = adjustedPoints.start.y
         switch edge.placement {
         case .trailing, .leading:
-            return CGPoint(x: start.x + horizontalOffset(for: edge.placement), y: startNodeCenter.y)
+            return CGPoint(x: xStart + horizontalOffset(for: edge.placement), y: startNodeCenter.y)
         case .top:
-            return CGPoint(x: start.x, y: start.y + verticalOffset(for: edge.placement))
+            return CGPoint(x: xStart, y: yStart + verticalOffset(for: edge.placement))
         case .topLeading:
-            return CGPoint(x: start.x + horizontalOffset(for: edge.placement), y: start.y)
+            return CGPoint(x: xStart + horizontalOffset(for: edge.placement), y: yStart)
         default:
-            return CGPoint(x: start.x, y: endNodeCenter.y)
+            return CGPoint(x: xStart, y: adjustedPoints.end.y)
         }
     }
     
     private var secondIntermediatePoint: CGPoint {
-        let start = adjustedPoints.start
+        let start = adjustedPoints.start.x
+        let end = adjustedPoints.end.y
         let offset = horizontalOffset(for: edge.placement)
         switch edge.placement {
         case .trailing, .leading:
-            return CGPoint(x: start.x + offset, y: endNodeCenter.y)
+            return CGPoint(x: start + offset, y:end)
         case .top:
-            return CGPoint(x: start.x + offset, y: start.y + verticalOffset(for: edge.placement))
+            return CGPoint(x: start + offset, y: adjustedPoints.start.y + verticalOffset(for: edge.placement))
         case .topLeading:
-            return CGPoint(x: start.x + offset, y: endNodeCenter.y)
+            return CGPoint(x: start + offset, y: end)
         default:
-            return CGPoint(x: start.x, y: endNodeCenter.y)
+            return CGPoint(x: start, y: end)
         }
     }
     
     private var thirdIntermediatePoint: CGPoint {
         switch edge.placement {
         case .top:
-            return CGPoint(x: adjustedPoints.start.x + horizontalOffset(for: edge.placement), y: endNodeCenter.y)
+            return CGPoint(x: adjustedPoints.start.x + horizontalOffset(for: edge.placement), y: adjustedPoints.end.y)
         default: return .zero
         }
     }
@@ -169,15 +171,16 @@ struct EdgeView: View {
     }
 
     private var edgeLabel: some View {
-        let yPosition = edge.placement == .topTrailing ? (endNodeCenter.y / 2) - 20 : endNodeCenter.y
         return Group {
             if !edge.label.isEmpty {
                 Text(edge.label)
+                    .font(.caption)
+                    .fontWeight(.medium)
                     .padding(UXMetrics.Padding.eight)
                     .background(.background)
                     .clipShape(RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.eight))
                     .shadow(radius: UXMetrics.ShadowRadius.four)
-                    .position(x: (startNodeCenter.x + endNodeCenter.x) / 2, y: yPosition)
+                    .position(x: (adjustedPoints.start.x + adjustedPoints.end.x) / 2, y: adjustedPoints.end.y)
             }
         }
     }
@@ -186,8 +189,8 @@ struct EdgeView: View {
 extension EdgePlacement {
     var opposite: EdgePlacement {
         switch self {
-        case .topTrailing: return .topLeading
-        default: return .leading
+        case .trailing: return .leading
+        default: return .topLeading
         }
     }
 }

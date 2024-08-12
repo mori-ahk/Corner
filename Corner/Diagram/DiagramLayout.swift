@@ -43,7 +43,7 @@ struct DiagramLayout: Layout {
             if maxLabelSize == .zero {
                 x += maxSize.width + 64
             } else {
-                x += maxSize.width + CGFloat(64 + (maxLabelSize * UXMetrics.Padding.four))
+                x += maxSize.width + CGFloat(64 + (maxLabelSize * 6))
             }
         }
     }
