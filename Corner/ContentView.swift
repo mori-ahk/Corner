@@ -10,14 +10,13 @@ import CornerParser
 
 struct ContentView: View {
     @StateObject private var vm = DiagramViewModel()
-    @State private var positions: [Node.ID : Anchor<CGPoint>] = [:]
-    @State private var sizes: [Node.ID : CGSize] = [:]
+    @State private var nodesBounds: [Node.ID : Anchor<CGRect>] = [:]
     @State private var diagram: Diagram?
     @State private var layeredNodes: [[Node]] = []
     @State private var nodes: [Node] = []
     @State private var input: String = ""
     
-    private typealias Key = CollectDictPrefKey<Node.ID, Anchor<CGPoint>>
+    private typealias Key = CollectDictPrefKey<Node.ID, Anchor<CGRect>>
     
     var body: some View {
         HStack {
@@ -30,12 +29,12 @@ struct ContentView: View {
             self.diagram = newDiagram
         }
         .onChange(of: diagram) { oldValue, newValue in
-            if newValue == nil { positions.removeAll() }
+            if newValue == nil { nodesBounds.removeAll() }
             layeredNodes = newValue?.layeredNodes() ?? []
             nodes = newValue?.flattenLayeredNodes() ?? []
         }
         .onPreferenceChange(Key.self) {
-            self.positions = $0
+            self.nodesBounds = $0
         }
         .animation(.default, value: diagram)
     }
@@ -87,14 +86,8 @@ struct ContentView: View {
         DiagramLayout(nodes: layeredNodes) {
             ForEach(nodes) { node in
                 NodeView(node: node)
-                    .anchorPreference(key: Key.self, value: .center) { [node.id: $0] }
-                    .background(
-                        GeometryReader { geometryProxy in
-                            Color.clear.onAppear {
-                                sizes[node.id, default: .zero] = geometryProxy.size
-                            }
-                        }
-                    )
+                    .transition(.blurReplace)
+                    .anchorPreference(key: Key.self, value: .bounds) { [node.id: $0] }
             }
         }
     }
@@ -103,17 +96,17 @@ struct ContentView: View {
     private func edgesLayer(in proxy: GeometryProxy) -> some View {
         ForEach(nodes) { node in
             ForEach(node.edges) { edge in
-                if let fromAnchor = positions[edge.from],
-                   let toAnchor = positions[edge.to],
-                   let toNode = nodes.first(where: { $0.id == edge.to }) {
+                if let startAnchor = nodesBounds[edge.from],
+                   let endAnchor = nodesBounds[edge.to],
+                   let endNode = nodes.first(where: { $0.id == edge.to }) {
                     EdgeView(
                         edge: edge,
-                        from: proxy[fromAnchor],
-                        to: proxy[toAnchor],
-                        fromNodeSize: sizes[edge.from, default: .zero],
-                        toNodeSize: sizes[edge.to, default: .zero],
-                        fromColor: node.color,
-                        toColor: toNode.color
+                        startPoint: proxy[startAnchor].origin,
+                        endPoint: proxy[endAnchor].origin,
+                        startNodeSize: proxy[startAnchor].size,
+                        endNodeSize: proxy[endAnchor].size,
+                        startColor: node.color,
+                        endColor: endNode.color
                     )
                 }
             }
