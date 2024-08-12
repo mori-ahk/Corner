@@ -56,7 +56,6 @@ struct EdgeView: View {
                     style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round)
                 )
                 .overlay(edgeLabel)
-                .id(edge.id)
             
             createNodeMarker(at: adjustedPoints.start, color: startColor)
             createNodeMarker(at: adjustedPoints.end, color: endColor)
@@ -119,11 +118,11 @@ struct EdgeView: View {
         let start = adjustedPoints.start
         switch edge.placement {
         case .trailing, .leading:
-            return CGPoint(x: start.x + offset(for: edge.placement), y: startNodeCenter.y)
+            return CGPoint(x: start.x + horizontalOffset(for: edge.placement), y: startNodeCenter.y)
         case .top:
-            return CGPoint(x: start.x, y: start.y - 16)
+            return CGPoint(x: start.x, y: start.y + verticalOffset(for: edge.placement))
         case .topLeading:
-            return CGPoint(x: start.x - 24, y: start.y)
+            return CGPoint(x: start.x + horizontalOffset(for: edge.placement), y: start.y)
         default:
             return CGPoint(x: start.x, y: endNodeCenter.y)
         }
@@ -131,12 +130,12 @@ struct EdgeView: View {
     
     private var secondIntermediatePoint: CGPoint {
         let start = adjustedPoints.start
-        let offset = offset(for: edge.placement)
+        let offset = horizontalOffset(for: edge.placement)
         switch edge.placement {
         case .trailing, .leading:
             return CGPoint(x: start.x + offset, y: endNodeCenter.y)
         case .top:
-            return CGPoint(x: start.x + offset, y: start.y - 16)
+            return CGPoint(x: start.x + offset, y: start.y + verticalOffset(for: edge.placement))
         case .topLeading:
             return CGPoint(x: start.x + offset, y: endNodeCenter.y)
         default:
@@ -147,17 +146,24 @@ struct EdgeView: View {
     private var thirdIntermediatePoint: CGPoint {
         switch edge.placement {
         case .top:
-            return CGPoint(x: adjustedPoints.start.x + offset(for: edge.placement), y: endNodeCenter.y)
+            return CGPoint(x: adjustedPoints.start.x + horizontalOffset(for: edge.placement), y: endNodeCenter.y)
         default: return .zero
         }
     }
 
-    private func offset(for placement: EdgePlacement) -> CGFloat {
+    private func horizontalOffset(for placement: EdgePlacement) -> CGFloat {
         switch placement {
         case .trailing: 16
         case .leading: -16
         case .top: -(startNodeSize.width / 2) - 24
         case .topLeading: -24
+        default: .zero
+        }
+    }
+    
+    private func verticalOffset(for placement: EdgePlacement) -> CGFloat {
+        switch placement {
+        case .top: -16
         default: .zero
         }
     }
