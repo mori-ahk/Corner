@@ -7,106 +7,163 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct EdgeView: View {
     let edge: Edge
-    let from: CGPoint
-    let to: CGPoint
-    let fromNodeSize: CGSize
-    let toNodeSize: CGSize
-    let fromColor: Color
-    let toColor: Color
-
+    let startPoint: CGPoint
+    let endPoint: CGPoint
+    let startNodeSize: CGSize
+    let endNodeSize: CGSize
+    let startColor: Color
+    let endColor: Color
+    private var startNodeCenter: CGPoint
+    private var endNodeCenter: CGPoint
+    private var adjustedPoints: (start: CGPoint, end: CGPoint)
+    
+    init(
+        edge: Edge,
+        startPoint: CGPoint,
+        endPoint: CGPoint,
+        startNodeSize: CGSize,
+        endNodeSize: CGSize,
+        startColor: Color,
+        endColor: Color
+    ) {
+        self.edge = edge
+        self.startPoint = startPoint
+        self.endPoint = endPoint
+        self.startNodeSize = startNodeSize
+        self.endNodeSize = endNodeSize
+        self.startColor = startColor
+        self.endColor = endColor
+        self.startNodeCenter = .zero
+        self.endNodeCenter = .zero
+        self.adjustedPoints = (.zero, .zero)
+        self.startNodeCenter = CGPoint(x: startPoint.x + startNodeSize.width / 2, y: startPoint.y + startNodeSize.height / 2)
+        self.endNodeCenter = CGPoint(x: endPoint.x + endNodeSize.width / 2, y: endPoint.y + endNodeSize.height / 2)
+        let start = adjustedPoint(for: startNodeCenter, nodeSize: startNodeSize, placement: edge.placement)
+        let end = adjustedPoint(for: endNodeCenter, nodeSize: endNodeSize, placement: edge.placement.opposite)
+        self.adjustedPoints = (start: start, end: end)
+    }
+    
+    
     var body: some View {
         ZStack {
-            let startPoint = adjustedPoint(for: fromCenter, nodeSize: fromNodeSize, placement: edge.placement)
-            let endPoint = adjustedPoint(for: toCenter, nodeSize: toNodeSize, placement: edge.placement.opposite)
-            Path { path in
-                path.move(to: startPoint)
-                if to.y != from.y {
-                    switch edge.placement {
-                    case .trailing:
-                        path.addLine(to: CGPoint(x: startPoint.x + 16, y: fromCenter.y))
-                        path.addLine(to: CGPoint(x: startPoint.x + 16, y: toCenter.y))
-                    case .leading:
-                        path.addLine(to: CGPoint(x: startPoint.x - 16, y: fromCenter.y))
-                        path.addLine(to: CGPoint(x: startPoint.x - 16, y: toCenter.y))
-                    case .topLeading:
-                        path.addLine(to: CGPoint(x: startPoint.x - 24, y: fromCenter.y))
-                        path.addLine(to: CGPoint(x: startPoint.x - 24, y: toCenter.y))
-                    case .top:
-                        path.addLine(to: CGPoint(x: startPoint.x, y: startPoint.y - 16))
-                        path.addLine(to: CGPoint(x: startPoint.x - (fromNodeSize.width / 2) - 24, y: startPoint.y - 16))
-                        path.addLine(to: CGPoint(x: startPoint.x - (fromNodeSize.width / 2) - 24, y: toCenter.y))
-                    default:
-                        path.addLine(to: CGPoint(x: startPoint.x, y: toCenter.y))
-                    }
-                }
-                path.addLine(to: endPoint)
-            }
-            .stroke(
-                fromColor.opacity(0.75),
-                style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round)
-            )
-            .overlay(edgeLabel)
-
-            ZStack {
-                Circle()
-                    .fill(fromColor.opacity(0.1))
-                    .frame(width: 12, height: 12)
-                    .position(startPoint)
-                
-                Circle()
-                    .fill(fromColor.opacity(0.75))
-                    .frame(width: 6, height: 6)
-                    .position(startPoint)
-
-            }
+            createPath()
+                .stroke(
+                    startColor.opacity(0.75),
+                    style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round)
+                )
+                .overlay(edgeLabel)
+                .id(edge.id)
             
-            ZStack {
-                Circle()
-                    .fill(toColor.opacity(0.1))
-                    .frame(width: 12, height: 12)
-                    .position(endPoint)
-                
-                Circle()
-                    .fill(toColor.opacity(0.75))
-                    .frame(width: 6, height: 6)
-                    .position(endPoint)
-
-            }
+            createNodeMarker(at: adjustedPoints.start, color: startColor)
+            createNodeMarker(at: adjustedPoints.end, color: endColor)
         }
     }
 
-    private func adjustedPoint(for point: CGPoint, nodeSize: CGSize, placement: EdgePlacement) -> CGPoint {
+    private func createPath() -> Path {
+        return Path { path in
+            path.move(to:  adjustedPoints.start)
+            if startPoint.y != endPoint.y {
+                path.addLine(to: firstIntermediatePoint)
+                path.addLine(to: secondIntermediatePoint)
+                if edge.placement == .top {
+                    path.addLine(to: thirdIntermediatePoint)
+                }
+            }
+            path.addLine(to: adjustedPoints.end)
+        }
+    }
+    
+    private func adjustedPoint(for center: CGPoint, nodeSize: CGSize, placement: EdgePlacement) -> CGPoint {
         let padding: CGFloat = 16
         let halfWidth = (nodeSize.width - padding) / 2
         let halfHeight = (nodeSize.height - padding) / 2
+        
+        let offset = placementOffset(placement, halfWidth: halfWidth, halfHeight: halfHeight)
+        
+        return CGPoint(x: center.x + offset.x, y: center.y + offset.y)
+    }
 
-        let offset: CGPoint
+    private func placementOffset(_ placement: EdgePlacement, halfWidth: CGFloat, halfHeight: CGFloat) -> CGPoint {
         switch placement {
-        case .topTrailing:
-            offset = CGPoint(x: halfWidth, y: -halfHeight)
-        case .trailing:
-            offset = CGPoint(x: halfWidth, y: 0)
-        case .bottomTrailing:
-            offset = CGPoint(x: halfWidth, y: halfHeight)
-        case .bottom:
-            offset = CGPoint(x: 0, y: halfHeight + 2)
-        case .bottomLeading:
-            offset = CGPoint(x: -halfWidth, y: halfHeight)
-        case .leading:
-            offset = CGPoint(x: -halfWidth, y: 0)
-        case .topLeading:
-            offset = CGPoint(x: -halfWidth, y: -halfHeight)
-        case .top:
-            offset = CGPoint(x: 0, y: -halfHeight)
+        case .topTrailing: return CGPoint(x: halfWidth, y: -halfHeight)
+        case .trailing: return CGPoint(x: halfWidth, y: 0)
+        case .bottomTrailing: return CGPoint(x: halfWidth, y: halfHeight)
+        case .bottom: return CGPoint(x: 0, y: halfHeight + 2)
+        case .bottomLeading: return CGPoint(x: -halfWidth, y: halfHeight)
+        case .leading: return CGPoint(x: -halfWidth, y: 0)
+        case .topLeading: return CGPoint(x: -halfWidth, y: -halfHeight)
+        case .top: return CGPoint(x: 0, y: -halfHeight)
         }
+    }
 
-        return CGPoint(x: point.x + offset.x, y: point.y + offset.y)
+    private func createNodeMarker(at point: CGPoint, color: Color) -> some View {
+        ZStack {
+            Circle()
+                .fill(color.opacity(0.1))
+                .frame(width: 12, height: 12)
+                .position(point)
+
+            Circle()
+                .fill(color.opacity(0.75))
+                .frame(width: 6, height: 6)
+                .position(point)
+        }
+        .animation(.default, value: point)
+    }
+
+    private var firstIntermediatePoint: CGPoint {
+        let start = adjustedPoints.start
+        switch edge.placement {
+        case .trailing, .leading:
+            return CGPoint(x: start.x + offset(for: edge.placement), y: startNodeCenter.y)
+        case .top:
+            return CGPoint(x: start.x, y: start.y - 16)
+        case .topLeading:
+            return CGPoint(x: start.x - 24, y: start.y)
+        default:
+            return CGPoint(x: start.x, y: endNodeCenter.y)
+        }
+    }
+    
+    private var secondIntermediatePoint: CGPoint {
+        let start = adjustedPoints.start
+        let offset = offset(for: edge.placement)
+        switch edge.placement {
+        case .trailing, .leading:
+            return CGPoint(x: start.x + offset, y: endNodeCenter.y)
+        case .top:
+            return CGPoint(x: start.x + offset, y: start.y - 16)
+        case .topLeading:
+            return CGPoint(x: start.x + offset, y: endNodeCenter.y)
+        default:
+            return CGPoint(x: start.x, y: endNodeCenter.y)
+        }
+    }
+    
+    private var thirdIntermediatePoint: CGPoint {
+        switch edge.placement {
+        case .top:
+            return CGPoint(x: adjustedPoints.start.x + offset(for: edge.placement), y: endNodeCenter.y)
+        default: return .zero
+        }
+    }
+
+    private func offset(for placement: EdgePlacement) -> CGFloat {
+        switch placement {
+        case .trailing: 16
+        case .leading: -16
+        case .top: -(startNodeSize.width / 2) - 24
+        case .topLeading: -24
+        default: .zero
+        }
     }
 
     private var edgeLabel: some View {
-        let yPosition = edge.placement == .topTrailing ? (toCenter.y / 2) - 20 : toCenter.y
+        let yPosition = edge.placement == .topTrailing ? (endNodeCenter.y / 2) - 20 : endNodeCenter.y
         return Group {
             if !edge.label.isEmpty {
                 Text(edge.label)
@@ -114,17 +171,9 @@ struct EdgeView: View {
                     .background(.background)
                     .clipShape(RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.eight))
                     .shadow(radius: UXMetrics.ShadowRadius.four)
-                    .position(x: (fromCenter.x + toCenter.x) / 2, y: yPosition)
+                    .position(x: (startNodeCenter.x + endNodeCenter.x) / 2, y: yPosition)
             }
         }
-    }
-    
-    private var fromCenter: CGPoint {
-        CGPoint(x: from.x + fromNodeSize.width / 2, y: from.y + fromNodeSize.height / 2)
-    }
-    
-    private var toCenter: CGPoint {
-        CGPoint(x: to.x + toNodeSize.width / 2, y: to.y + toNodeSize.height / 2)
     }
 }
 
@@ -132,7 +181,7 @@ extension EdgePlacement {
     var opposite: EdgePlacement {
         switch self {
         case .topTrailing: return .topLeading
-        default : return .leading
+        default: return .leading
         }
     }
 }

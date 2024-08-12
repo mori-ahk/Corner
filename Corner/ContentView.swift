@@ -86,6 +86,7 @@ struct ContentView: View {
         DiagramLayout(nodes: layeredNodes) {
             ForEach(nodes) { node in
                 NodeView(node: node)
+                    .transition(.blurReplace)
                     .anchorPreference(key: Key.self, value: .bounds) { [node.id: $0] }
             }
         }
@@ -95,17 +96,17 @@ struct ContentView: View {
     private func edgesLayer(in proxy: GeometryProxy) -> some View {
         ForEach(nodes) { node in
             ForEach(node.edges) { edge in
-                if let fromAnchor = nodesBounds[edge.from],
-                   let toAnchor = nodesBounds[edge.to],
-                   let toNode = nodes.first(where: { $0.id == edge.to }) {
+                if let startAnchor = nodesBounds[edge.from],
+                   let endAnchor = nodesBounds[edge.to],
+                   let endNode = nodes.first(where: { $0.id == edge.to }) {
                     EdgeView(
                         edge: edge,
-                        from: proxy[fromAnchor].origin,
-                        to: proxy[toAnchor].origin,
-                        fromNodeSize: proxy[fromAnchor].size,
-                        toNodeSize: proxy[toAnchor].size,
-                        fromColor: node.color,
-                        toColor: toNode.color
+                        startPoint: proxy[startAnchor].origin,
+                        endPoint: proxy[endAnchor].origin,
+                        startNodeSize: proxy[startAnchor].size,
+                        endNodeSize: proxy[endAnchor].size,
+                        startColor: node.color,
+                        endColor: endNode.color
                     )
                 }
             }
