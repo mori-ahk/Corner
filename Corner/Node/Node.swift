@@ -23,13 +23,12 @@ struct Node: Identifiable, Equatable {
         
         if let attribute = nodeDecl.attribute {
             guard case let .color(colorString) = attribute else {
-                self.color = [Color.blue, Color.orange, Color.green, Color.indigo].randomElement()!
+                self.color = Color.random()
                 return
             }
-            
             self.color = color(from: colorString)
         } else {
-            self.color = [Color.blue, Color.orange, Color.green, Color.indigo, Color.red, Color.brown, Color.cyan].randomElement()!
+            self.color = Color.random()
         }
     }
     
