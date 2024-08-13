@@ -17,6 +17,9 @@ struct EdgeView: View {
     let endNodeSize: CGSize
     let startColor: Color
     let endColor: Color
+    private var hOffset: CGFloat
+    private var vOffset: CGFloat
+    private var direction: Direction
     private var startNodeCenter: CGPoint
     private var endNodeCenter: CGPoint
     private var adjustedPoints: (start: CGPoint, end: CGPoint)
@@ -37,13 +40,25 @@ struct EdgeView: View {
         self.endNodeSize = endNodeSize
         self.startColor = startColor
         self.endColor = endColor
+        self.hOffset = .zero
+        self.vOffset = .zero
+        self.direction = .leftOrRight
         self.startNodeCenter = .zero
         self.endNodeCenter = .zero
         self.adjustedPoints = (.zero, .zero)
         self.startNodeCenter = CGPoint(x: startPoint.x + startNodeSize.width / 2, y: startPoint.y + startNodeSize.height / 2)
         self.endNodeCenter = CGPoint(x: endPoint.x + endNodeSize.width / 2, y: endPoint.y + endNodeSize.height / 2)
+        self.hOffset = horizontalOffset(for: edge.placement)
+        self.vOffset = verticalOffset(for: edge.placement)
+        if startNodeCenter.y < endNodeCenter.y {
+            self.direction = .down
+        } else if startNodeCenter.y > endNodeCenter.y {
+            self.direction = .up
+        } else {
+            self.direction = .leftOrRight
+        }
         let start = adjustedPoint(for: startNodeCenter, nodeSize: startNodeSize, placement: edge.placement)
-        let end = adjustedPoint(for: endNodeCenter, nodeSize: endNodeSize, placement: edge.placement.opposite)
+        let end = adjustedPoint(for: endNodeCenter, nodeSize: endNodeSize, placement: edge.placement.opposite(basedOn: direction))
         self.adjustedPoints = (start: start, end: end)
     }
     
@@ -67,7 +82,7 @@ struct EdgeView: View {
             path.move(to:  adjustedPoints.start)
             if startPoint.y != endPoint.y {
                 path.addLine(to: firstIntermediatePoint)
-                path.addLine(to: secondIntermediatePoint)
+                path.addLine(to: secondIntermediatePoint(basedOn: direction))
                 if edge.placement == .top {
                     path.addLine(to: thirdIntermediatePoint)
                 }
@@ -119,27 +134,26 @@ struct EdgeView: View {
         let yStart = adjustedPoints.start.y
         switch edge.placement {
         case .trailing, .leading:
-            return CGPoint(x: xStart + horizontalOffset(for: edge.placement), y: startNodeCenter.y)
+            return CGPoint(x: xStart + hOffset, y: startNodeCenter.y)
         case .top:
-            return CGPoint(x: xStart, y: yStart + verticalOffset(for: edge.placement))
-        case .topLeading:
-            return CGPoint(x: xStart + horizontalOffset(for: edge.placement), y: yStart)
+            return CGPoint(x: xStart, y: yStart + vOffset)
+        case .topLeading, .topTrailing, .bottomTrailing:
+            return CGPoint(x: xStart + hOffset, y: yStart)
         default:
             return CGPoint(x: xStart, y: adjustedPoints.end.y)
         }
     }
     
-    private var secondIntermediatePoint: CGPoint {
+    private func secondIntermediatePoint(basedOn direction: Direction) -> CGPoint {
         let start = adjustedPoints.start.x
         let end = adjustedPoints.end.y
-        let offset = horizontalOffset(for: edge.placement)
         switch edge.placement {
         case .trailing, .leading:
-            return CGPoint(x: start + offset, y:end)
+            return CGPoint(x: start + hOffset, y:end)
         case .top:
-            return CGPoint(x: start + offset, y: adjustedPoints.start.y + verticalOffset(for: edge.placement))
-        case .topLeading:
-            return CGPoint(x: start + offset, y: end)
+            return CGPoint(x: start + hOffset, y: adjustedPoints.start.y + vOffset)
+        case .topLeading, .topTrailing, .bottomTrailing:
+            return CGPoint(x: start + hOffset, y: end)
         default:
             return CGPoint(x: start, y: end)
         }
@@ -155,10 +169,12 @@ struct EdgeView: View {
 
     private func horizontalOffset(for placement: EdgePlacement) -> CGFloat {
         switch placement {
-        case .trailing: 16
+        case .trailing: 24
         case .leading: -16
         case .top: -(startNodeSize.width / 2) - 24
         case .topLeading: -24
+        case .topTrailing: 16
+        case .bottomTrailing: 32
         default: .zero
         }
     }
@@ -186,11 +202,31 @@ struct EdgeView: View {
     }
 }
 
+enum Direction {
+    case up
+    case down
+    case leftOrRight
+}
+
 extension EdgePlacement {
-    var opposite: EdgePlacement {
+    func opposite(basedOn direction: Direction) -> EdgePlacement {
         switch self {
-        case .trailing: return .leading
-        default: return .topLeading
+        case .trailing:
+            switch direction {
+            case .up: return .bottomLeading
+            case .down: return .topLeading
+            case .leftOrRight: return .leading
+            }
+        case .bottomTrailing:
+            switch direction {
+            case .down: return .topLeading
+            default: return .bottomLeading
+            }
+        default:
+            switch direction {
+            case .up: return .bottomLeading
+            default: return .topLeading
+            }
         }
     }
 }
