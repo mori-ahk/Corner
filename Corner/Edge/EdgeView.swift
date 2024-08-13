@@ -68,12 +68,12 @@ struct EdgeView: View {
             createPath()
                 .stroke(
                     startColor.opacity(0.75),
-                    style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round)
+                    style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round)
                 )
                 .overlay(edgeLabel)
             
             createNodeMarker(at: adjustedPoints.start, color: startColor)
-            createNodeMarker(at: adjustedPoints.end, color: endColor)
+            createNodeMarker(at: adjustedPoints.end, color: startColor)
         }
     }
 
@@ -118,12 +118,12 @@ struct EdgeView: View {
         ZStack {
             Circle()
                 .fill(color.opacity(0.1))
-                .frame(width: 12, height: 12)
+                .frame(width: 10, height: 10)
                 .position(point)
 
             Circle()
                 .fill(color.opacity(0.75))
-                .frame(width: 6, height: 6)
+                .frame(width: 4, height: 4)
                 .position(point)
         }
         .animation(.default, value: point)
