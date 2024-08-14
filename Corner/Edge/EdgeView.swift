@@ -68,7 +68,7 @@ struct EdgeView: View {
             createPath()
                 .stroke(
                     startColor.opacity(0.75),
-                    style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round)
+                    style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
                 )
                 .overlay(edgeLabel)
             
