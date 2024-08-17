@@ -11,11 +11,10 @@ import CornerParser
 struct ContentView: View {
     @StateObject private var vm = DiagramViewModel()
     @State private var nodesBounds: [Node.ID : Anchor<CGRect>] = [:]
-    @State private var diagram: Diagram?
-    @State private var layeredNodes: [[Node]] = []
-    @State private var nodes: [Node] = []
+    @State private var diagram: Diagram = Diagram(nodes: [])
     @State private var input: String = ""
-    
+    @State private var previousInput: String = ""
+
     private typealias Key = CollectDictPrefKey<Node.ID, Anchor<CGRect>>
     
     var body: some View {
@@ -27,11 +26,6 @@ struct ContentView: View {
         .padding(UXMetrics.Padding.twentyFour)
         .onReceive(vm.$diagram) { newDiagram in
             self.diagram = newDiagram
-        }
-        .onChange(of: diagram) { oldValue, newValue in
-            if newValue == nil { nodesBounds.removeAll() }
-            layeredNodes = newValue?.layeredNodes() ?? []
-            nodes = newValue?.flattenLayeredNodes() ?? []
         }
         .onPreferenceChange(Key.self) {
             self.nodesBounds = $0
@@ -61,17 +55,23 @@ struct ContentView: View {
     private var actionButtons: some View {
         HStack {
             ActionButton(title: "Generate", color: .blue) {
-                do {
-                    try vm.diagram(for: input)
-                } catch { print(error) }
+                guard previousInput != input else { return }
+                self.previousInput = input
+                self.diagram = Diagram(nodes: [])
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    do {
+                        try vm.diagram(for: input)
+                    } catch { print(error) }
+                }
             }
             
             ActionButton(title: "Clear", color: .red) {
-                self.diagram = nil
+                self.diagram = Diagram(nodes: [])
             }
         }
     }
-    
+   
+    @ViewBuilder
     private var diagramSection: some View {
         GeometryReader { proxy in
             ZStack(alignment: .topLeading) {
@@ -82,9 +82,10 @@ struct ContentView: View {
         .padding(UXMetrics.Padding.twentyFour)
     }
     
+    @ViewBuilder
     private var diagramLayout: some View {
-        DiagramLayout(nodes: layeredNodes) {
-            ForEach(nodes) { node in
+        DiagramLayout(nodes: diagram.layeredNodes) {
+            ForEach(diagram.flattenNodes) { node in
                 NodeView(node: node)
                     .transition(.blurReplace)
                     .anchorPreference(key: Key.self, value: .bounds) { [node.id: $0] }
@@ -94,11 +95,12 @@ struct ContentView: View {
     
     @ViewBuilder
     private func edgesLayer(in proxy: GeometryProxy) -> some View {
-        ForEach(nodes) { node in
+        let bounds = buildBounds(with: proxy)
+        ForEach(diagram.flattenNodes) { node in
             ForEach(node.edges) { edge in
                 if let startAnchor = nodesBounds[edge.from],
                    let endAnchor = nodesBounds[edge.to],
-                   let endNode = nodes.first(where: { $0.id == edge.to }) {
+                   let endNode = diagram.flattenNodes.first(where: { $0.id == edge.to }) {
                     EdgeView(
                         edge: edge,
                         startPoint: proxy[startAnchor].origin,
@@ -106,10 +108,21 @@ struct ContentView: View {
                         startNodeSize: proxy[startAnchor].size,
                         endNodeSize: proxy[endAnchor].size,
                         startColor: node.color,
-                        endColor: endNode.color
+                        endColor: endNode.color,
+                        nodesBounds: bounds
                     )
+                    .id(edge.from + edge.to)
                 }
             }
         }
+    }
+    
+    private func buildBounds(with proxy: GeometryProxy) -> [Node.ID: CGRect] {
+        var result: [Node.ID : CGRect] = [:]
+        for (key, value) in nodesBounds {
+            result[key, default: .zero] = proxy[value]
+        }
+        
+        return result
     }
 }

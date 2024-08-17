@@ -11,8 +11,8 @@ import CornerParser
 class DiagramViewModel: ObservableObject {
     
     private let parser = CornerParser()
-   
-    @Published var diagram: Diagram?
+    
+    @Published var diagram: Diagram = Diagram(nodes: [])
     
     @MainActor
     func diagram(for input: String) throws {
@@ -29,4 +29,5 @@ class DiagramViewModel: ObservableObject {
             throw error
         }
     }
+    
 }

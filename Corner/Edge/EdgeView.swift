@@ -17,6 +17,7 @@ struct EdgeView: View {
     let endNodeSize: CGSize
     let startColor: Color
     let endColor: Color
+    var nodesBounds: [Node.ID : CGRect]
     private var hOffset: CGFloat
     private var vOffset: CGFloat
     private var direction: Direction
@@ -31,7 +32,8 @@ struct EdgeView: View {
         startNodeSize: CGSize,
         endNodeSize: CGSize,
         startColor: Color,
-        endColor: Color
+        endColor: Color,
+        nodesBounds: [Node.ID: CGRect]
     ) {
         self.edge = edge
         self.startPoint = startPoint
@@ -40,6 +42,7 @@ struct EdgeView: View {
         self.endNodeSize = endNodeSize
         self.startColor = startColor
         self.endColor = endColor
+        self.nodesBounds = nodesBounds
         self.hOffset = .zero
         self.vOffset = .zero
         self.direction = .leftOrRight
@@ -80,9 +83,9 @@ struct EdgeView: View {
     private func createPath() -> Path {
         return Path { path in
             path.move(to:  adjustedPoints.start)
-            if startPoint.y != endPoint.y {
-                path.addLine(to: firstIntermediatePoint)
-                path.addLine(to: secondIntermediatePoint(basedOn: direction))
+            if adjustedPoints.start.y != adjustedPoints.end.y {
+                path.addLine(to: firstPoint)
+                path.addLine(to: secondPoint)
                 if edge.placement == .top {
                     path.addLine(to: thirdIntermediatePoint)
                 }
@@ -122,40 +125,80 @@ struct EdgeView: View {
                 .position(point)
 
             Circle()
-                .fill(color.opacity(0.75))
-                .frame(width: 4, height: 4)
+                .fill(color)
+                .frame(width: 5, height: 5)
                 .position(point)
         }
         .animation(.default, value: point)
     }
 
-    private var firstIntermediatePoint: CGPoint {
+    private var firstPoint: CGPoint {
+        var padding: CGFloat = .zero
+        guard adjustedPoints.start.y != adjustedPoints.end.y else {
+            return firstIntermediatePoint(padding)
+        }
+        
+        while doesIntersect(with: firstIntermediatePoint(padding)) {
+            padding += 16
+        }
+        
+        return firstIntermediatePoint(padding)
+    }
+    
+    private var secondPoint: CGPoint {
+        var padding: CGFloat = .zero
+        guard adjustedPoints.start.y != adjustedPoints.end.y else {
+            return secondIntermediatePoint(padding)
+        }
+        
+        while doesIntersect(with: secondIntermediatePoint(padding)) {
+            padding += 16
+        }
+        
+        return secondIntermediatePoint(padding)
+    }
+    
+    private func firstIntermediatePoint(_ padding: CGFloat) -> CGPoint {
         let xStart = adjustedPoints.start.x
         let yStart = adjustedPoints.start.y
         switch edge.placement {
         case .trailing, .leading:
-            return CGPoint(x: xStart + hOffset, y: startNodeCenter.y)
+            return CGPoint(x: xStart + hOffset, y: yStart)
         case .top:
             return CGPoint(x: xStart, y: yStart + vOffset)
-        case .topLeading, .topTrailing, .bottomTrailing:
+        case .topLeading:
             return CGPoint(x: xStart + hOffset, y: yStart)
+        case .topTrailing:
+            return CGPoint(x: xStart + padding, y: adjustedPoints.end.y)
+        case .bottomTrailing:
+            let y = padding == .zero ? adjustedPoints.end.y : yStart
+            return CGPoint(x: xStart + padding, y: adjustedPoints.end.y)
+        case .bottom, .bottomLeading:
+            return CGPoint(x: xStart, y: adjustedPoints.end.y - padding)
         default:
             return CGPoint(x: xStart, y: adjustedPoints.end.y)
         }
     }
     
-    private func secondIntermediatePoint(basedOn direction: Direction) -> CGPoint {
-        let start = adjustedPoints.start.x
-        let end = adjustedPoints.end.y
+    private func secondIntermediatePoint(_ padding: CGFloat) -> CGPoint {
+        let xStart = adjustedPoints.start.x
+        let yEnd = adjustedPoints.end.y
         switch edge.placement {
         case .trailing, .leading:
-            return CGPoint(x: start + hOffset, y:end)
+            return CGPoint(x: xStart + hOffset, y: yEnd)
         case .top:
-            return CGPoint(x: start + hOffset, y: adjustedPoints.start.y + vOffset)
-        case .topLeading, .topTrailing, .bottomTrailing:
-            return CGPoint(x: start + hOffset, y: end)
+            return CGPoint(x: xStart + hOffset, y: adjustedPoints.start.y + vOffset)
+        case .topLeading:
+            return CGPoint(x: xStart + hOffset, y: yEnd)
+        case .topTrailing:
+            return CGPoint(x: xStart + padding, y: yEnd)
+        case .bottomTrailing:
+            return CGPoint(x: xStart + padding, y: yEnd)
+        case .bottom, .bottomLeading:
+            let x = padding == .zero ? xStart : adjustedPoints.end.x - padding
+            return CGPoint(x: x, y: yEnd - padding)
         default:
-            return CGPoint(x: start, y: end)
+            return CGPoint(x: xStart + padding, y: yEnd)
         }
     }
     
@@ -174,7 +217,7 @@ struct EdgeView: View {
         case .top: -(startNodeSize.width / 2) - 24
         case .topLeading: -24
         case .topTrailing: 16
-        case .bottomTrailing: 32
+        case .bottomTrailing: .zero
         default: .zero
         }
     }
@@ -199,6 +242,17 @@ struct EdgeView: View {
                     .position(x: (adjustedPoints.start.x + adjustedPoints.end.x) / 2, y: adjustedPoints.end.y)
             }
         }
+    }
+    
+    private func doesIntersect(with point: CGPoint) -> Bool {
+        print("\(edge.from) -> \(edge.to)")
+        for (key, value) in nodesBounds {
+            if value.contains(point) {
+                return true
+            } else { continue }
+        }
+        
+        return false
     }
 }
 

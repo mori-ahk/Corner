@@ -9,10 +9,20 @@ import Foundation
 
 struct Diagram: Equatable {
     let nodes: [Node]
+    var layeredNodes: [[Node]]
+    var flattenNodes: [Node]
+    
+    init(nodes: [Node]) {
+        self.nodes = nodes
+        self.layeredNodes = []
+        self.flattenNodes = []
+        self.layeredNodes = layered()
+        self.flattenNodes = layered().flatMap { $0 }
+    }
 }
 
 extension Diagram {
-    func layeredNodes() -> [[Node]] {
+    private func layered() -> [[Node]] {
         var layers: [[Node]] = []
         var visited: Set<String> = []
         var currentLayer: [Node] = []
@@ -35,14 +45,11 @@ extension Diagram {
                     }
                 }
             }
-           
+            
+//            nextLayer = nextLayer.sorted { $0.edges.count > $1.edges.count }
             currentLayer = nextLayer
         }
         
         return layers
-    }
-    
-    func flattenLayeredNodes() -> [Node] {
-        layeredNodes().flatMap { $0 }
     }
 }
