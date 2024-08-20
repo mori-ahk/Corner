@@ -47,15 +47,16 @@ class DiagramViewModel: ObservableObject {
         guard let start = allNodeBounds[edge.from],
               let end = allNodeBounds[edge.to] else { return nil }
         return EdgeDescriptor(
-            start: EdgeAnchorPoint(
+            start: EdgeAnchor(
                 origin: start.origin,
                 size: start.size,
                 color: startColor
             ),
-            end: EdgeAnchorPoint(
+            end: EdgeAnchor(
                 origin: end.origin,
                 size: end.size
-            )
+            ),
+            placement: edge.placement
         )
     }
 }

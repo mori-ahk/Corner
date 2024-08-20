@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct EdgeDescriptor {
-    let start: EdgeAnchorPoint
-    let end: EdgeAnchorPoint
+    let start: EdgeAnchor
+    let end: EdgeAnchor
+    let placement: EdgePlacement
     var direction: EdgeDirection
     
-    init(start: EdgeAnchorPoint, end: EdgeAnchorPoint) {
+    init(start: EdgeAnchor, end: EdgeAnchor, placement: EdgePlacement) {
         self.start = start
         self.end = end
+        self.placement = placement
         if start.center.y < end.center.y {
             self.direction = .down
         } else if start.center.y > end.center.y {
@@ -25,8 +27,7 @@ struct EdgeDescriptor {
     }
 }
 
-
-struct EdgeAnchorPoint {
+struct EdgeAnchor {
     let origin: CGPoint
     let size: CGSize
     let center: CGPoint
