@@ -11,7 +11,7 @@ import CornerParser
 struct ContentView: View {
     @StateObject private var vm = DiagramViewModel()
     @State private var nodesBounds: [Node.ID : Anchor<CGRect>] = [:]
-    @State private var diagram: Diagram = Diagram(nodes: [])
+    @State private var diagram: Diagram = Diagram()
     @State private var input: String = ""
     @State private var previousInput: String = ""
 
@@ -59,7 +59,7 @@ struct ContentView: View {
             ActionButton(title: "Generate", color: .blue) {
                 guard previousInput != input else { return }
                 self.previousInput = input
-                self.diagram = Diagram(nodes: [])
+                self.diagram = Diagram()
                 vm.allIntermidiatePoints.removeAll(keepingCapacity: true)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     do {
@@ -69,7 +69,7 @@ struct ContentView: View {
             }
             
             ActionButton(title: "Clear", color: .red) {
-                self.diagram = Diagram(nodes: [])
+                self.diagram = Diagram()
             }
         }
     }

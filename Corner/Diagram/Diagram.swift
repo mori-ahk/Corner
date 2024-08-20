@@ -12,7 +12,7 @@ struct Diagram: Equatable {
     var layeredNodes: [[Node]]
     var flattenNodes: [Node]
     
-    init(nodes: [Node]) {
+    init(nodes: [Node] = []) {
         self.nodes = nodes
         self.layeredNodes = []
         self.flattenNodes = []

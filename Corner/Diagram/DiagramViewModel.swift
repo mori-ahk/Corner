@@ -14,7 +14,7 @@ class DiagramViewModel: ObservableObject {
     
     var allIntermidiatePoints: Set<CGPoint> = Set()
     @Published var allNodeBounds: [Node.ID: CGRect] = [:]
-    @Published var diagram: Diagram = Diagram(nodes: [])
+    @Published var diagram: Diagram = Diagram()
     
     @MainActor
     func diagram(for input: String) throws {
