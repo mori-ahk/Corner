@@ -20,15 +20,17 @@ struct ContentView: View {
     var body: some View {
         HStack {
             inputSection
-            diagramSection
+            if !diagram.nodes.isEmpty {
+                diagramSection
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding(UXMetrics.Padding.twentyFour)
         .onReceive(vm.$diagram) { newDiagram in
             self.diagram = newDiagram
         }
-        .onPreferenceChange(Key.self) {
-            self.nodesBounds = $0
+        .onPreferenceChange(Key.self) { bounds in
+            self.nodesBounds = bounds
         }
         .animation(.default, value: diagram)
     }
@@ -58,6 +60,7 @@ struct ContentView: View {
                 guard previousInput != input else { return }
                 self.previousInput = input
                 self.diagram = Diagram(nodes: [])
+                vm.allIntermidiatePoints.removeAll(keepingCapacity: true)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     do {
                         try vm.diagram(for: input)
@@ -76,7 +79,13 @@ struct ContentView: View {
         GeometryReader { proxy in
             ZStack(alignment: .topLeading) {
                 diagramLayout
-                edgesLayer(in: proxy)
+
+                if !vm.allNodeBounds.isEmpty {
+                    edgesLayer(in: proxy)
+                }
+            }
+            .onAppear {
+                vm.bounds(from: proxy, given: nodesBounds)
             }
         }
         .padding(UXMetrics.Padding.twentyFour)
@@ -87,7 +96,6 @@ struct ContentView: View {
         DiagramLayout(nodes: diagram.layeredNodes) {
             ForEach(diagram.flattenNodes) { node in
                 NodeView(node: node)
-                    .transition(.blurReplace)
                     .anchorPreference(key: Key.self, value: .bounds) { [node.id: $0] }
             }
         }
@@ -95,34 +103,17 @@ struct ContentView: View {
     
     @ViewBuilder
     private func edgesLayer(in proxy: GeometryProxy) -> some View {
-        let bounds = buildBounds(with: proxy)
         ForEach(diagram.flattenNodes) { node in
             ForEach(node.edges) { edge in
-                if let startAnchor = nodesBounds[edge.from],
-                   let endAnchor = nodesBounds[edge.to],
-                   let endNode = diagram.flattenNodes.first(where: { $0.id == edge.to }) {
+                if let edgeDescriptor = vm.descriptor(for: edge, with: node.color) {
                     EdgeView(
                         edge: edge,
-                        startPoint: proxy[startAnchor].origin,
-                        endPoint: proxy[endAnchor].origin,
-                        startNodeSize: proxy[startAnchor].size,
-                        endNodeSize: proxy[endAnchor].size,
-                        startColor: node.color,
-                        endColor: endNode.color,
-                        nodesBounds: bounds
+                        edgeDescriptor: edgeDescriptor,
+                        nodesBounds: vm.allNodeBounds,
+                        diagramViewModel: vm
                     )
-                    .id(edge.from + edge.to)
                 }
             }
         }
-    }
-    
-    private func buildBounds(with proxy: GeometryProxy) -> [Node.ID: CGRect] {
-        var result: [Node.ID : CGRect] = [:]
-        for (key, value) in nodesBounds {
-            result[key, default: .zero] = proxy[value]
-        }
-        
-        return result
     }
 }

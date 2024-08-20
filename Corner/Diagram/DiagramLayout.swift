@@ -37,11 +37,6 @@ struct DiagramLayout: Layout {
                 } else {
                     y += 64
                 }
-//                if node.edges.isEmpty {
-//                    y += 64
-//                } else {
-//                    y += CGFloat(64 * node.edges.count)
-//                }
             }
             let edgeLabelSizes = layer.flatMap { $0.edges.map { $0.label.count } }
             let maxLabelSize: Double = Double(edgeLabelSizes.max() ?? .zero)

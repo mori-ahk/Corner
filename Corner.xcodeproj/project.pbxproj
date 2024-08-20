@@ -15,6 +15,7 @@
 		826FF04B2C60580B00559DED /* CornerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826FF04A2C60580B00559DED /* CornerUITests.swift */; };
 		826FF04D2C60580B00559DED /* CornerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826FF04C2C60580B00559DED /* CornerUITestsLaunchTests.swift */; };
 		826FF05B2C60597300559DED /* CornerParser in Frameworks */ = {isa = PBXBuildFile; productRef = 826FF05A2C60597300559DED /* CornerParser */; };
+		8270430E2C74EC1300E2BCE9 /* EdgeDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8270430D2C74EC1300E2BCE9 /* EdgeDescriptor.swift */; };
 		8273F6662C62621D00B589A7 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8273F6652C62621D00B589A7 /* Node.swift */; };
 		8273F6682C62624400B589A7 /* Edge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8273F6672C62624400B589A7 /* Edge.swift */; };
 		8273F66A2C62626300B589A7 /* Diagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8273F6692C62626300B589A7 /* Diagram.swift */; };
@@ -58,6 +59,7 @@
 		826FF0462C60580B00559DED /* CornerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CornerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		826FF04A2C60580B00559DED /* CornerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerUITests.swift; sourceTree = "<group>"; };
 		826FF04C2C60580B00559DED /* CornerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		8270430D2C74EC1300E2BCE9 /* EdgeDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeDescriptor.swift; sourceTree = "<group>"; };
 		8273F6652C62621D00B589A7 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		8273F6672C62624400B589A7 /* Edge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Edge.swift; sourceTree = "<group>"; };
 		8273F6692C62626300B589A7 /* Diagram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diagram.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 			children = (
 				8273F6672C62624400B589A7 /* Edge.swift */,
 				8273F66F2C6262C100B589A7 /* EdgeView.swift */,
+				8270430D2C74EC1300E2BCE9 /* EdgeDescriptor.swift */,
 			);
 			path = Edge;
 			sourceTree = "<group>";
@@ -345,6 +348,7 @@
 			files = (
 				829DFA662C6933D2005E4671 /* InputActionButton.swift in Sources */,
 				8273F6762C62673B00B589A7 /* DiagramViewModel.swift in Sources */,
+				8270430E2C74EC1300E2BCE9 /* EdgeDescriptor.swift in Sources */,
 				829DFA6A2C69532B005E4671 /* UXMetrics.swift in Sources */,
 				8273F6662C62621D00B589A7 /* Node.swift in Sources */,
 				8273F6732C6262E600B589A7 /* DiagramLayout.swift in Sources */,
