@@ -20,7 +20,7 @@ struct EdgeView: View {
     private var diagramViewModel: DiagramViewModel
     private var hOffset: CGFloat
     private var vOffset: CGFloat
-    private var direction: Direction
+    private var direction: EdgeDirection
     private var startNodeCenter: CGPoint
     private var endNodeCenter: CGPoint
     private var adjustedPoints: (start: CGPoint, end: CGPoint)
@@ -38,26 +38,17 @@ struct EdgeView: View {
         self.startNodeSize = edgeDescriptor.start.size
         self.endNodeSize = edgeDescriptor.end.size
         self.startColor = edgeDescriptor.start.color ?? .black
+        self.startNodeCenter = edgeDescriptor.start.center
+        self.endNodeCenter = edgeDescriptor.end.center
+        self.direction = edgeDescriptor.direction
         self.nodesBounds = nodesBounds
         self.diagramViewModel = diagramViewModel
         self.hOffset = .zero
         self.vOffset = .zero
-        self.direction = .leftOrRight
-        self.startNodeCenter = .zero
-        self.endNodeCenter = .zero
         self.adjustedPoints = (.zero, .zero)
         self.intermidiatePoints = []
-        self.startNodeCenter = CGPoint(x: startPoint.x + startNodeSize.width / 2, y: startPoint.y + startNodeSize.height / 2)
-        self.endNodeCenter = CGPoint(x: endPoint.x + endNodeSize.width / 2, y: endPoint.y + endNodeSize.height / 2)
         self.hOffset = horizontalOffset(for: edge.placement)
         self.vOffset = verticalOffset(for: edge.placement)
-        if startNodeCenter.y < endNodeCenter.y {
-            self.direction = .down
-        } else if startNodeCenter.y > endNodeCenter.y {
-            self.direction = .up
-        } else {
-            self.direction = .leftOrRight
-        }
         let start = adjustedPoint(for: startNodeCenter, nodeSize: startNodeSize, placement: edge.placement)
         let end = adjustedPoint(for: endNodeCenter, nodeSize: endNodeSize, placement: edge.placement.opposite(basedOn: direction))
         self.adjustedPoints = (start: start, end: end)
@@ -309,14 +300,8 @@ struct EdgeView: View {
     }
 }
 
-enum Direction {
-    case up
-    case down
-    case leftOrRight
-}
-
 extension EdgePlacement {
-    func opposite(basedOn direction: Direction) -> EdgePlacement {
+    func opposite(basedOn direction: EdgeDirection) -> EdgePlacement {
         switch self {
         case .trailing:
             switch direction {
