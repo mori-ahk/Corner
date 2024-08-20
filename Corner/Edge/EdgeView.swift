@@ -41,17 +41,14 @@ struct EdgeView: View {
         self.startNodeCenter = edgeDescriptor.start.center
         self.endNodeCenter = edgeDescriptor.end.center
         self.direction = edgeDescriptor.direction
+        self.adjustedPoints = (start: edgeDescriptor.start.adjustedPoint, end: edgeDescriptor.end.adjustedPoint)
         self.nodesBounds = nodesBounds
         self.diagramViewModel = diagramViewModel
         self.hOffset = .zero
         self.vOffset = .zero
-        self.adjustedPoints = (.zero, .zero)
         self.intermidiatePoints = []
         self.hOffset = horizontalOffset(for: edge.placement)
         self.vOffset = verticalOffset(for: edge.placement)
-        let start = adjustedPoint(for: startNodeCenter, nodeSize: startNodeSize, placement: edge.placement)
-        let end = adjustedPoint(for: endNodeCenter, nodeSize: endNodeSize, placement: edge.placement.opposite(basedOn: direction))
-        self.adjustedPoints = (start: start, end: end)
         if adjustedPoints.start.y == adjustedPoints.end.y {
 //            print("Adding adjusted")
             self.diagramViewModel.addPoint(adjustedPoints.start)
@@ -95,29 +92,6 @@ struct EdgeView: View {
         }
     }
     
-    private func adjustedPoint(for center: CGPoint, nodeSize: CGSize, placement: EdgePlacement) -> CGPoint {
-        let padding: CGFloat = 16
-        let halfWidth = (nodeSize.width - padding) / 2
-        let halfHeight = (nodeSize.height - padding) / 2
-        
-        let offset = placementOffset(placement, halfWidth: halfWidth, halfHeight: halfHeight)
-        
-        return CGPoint(x: Int(center.x + offset.x), y: Int(center.y + offset.y))
-    }
-
-    private func placementOffset(_ placement: EdgePlacement, halfWidth: CGFloat, halfHeight: CGFloat) -> CGPoint {
-        switch placement {
-        case .topTrailing: return CGPoint(x: halfWidth, y: -halfHeight)
-        case .trailing: return CGPoint(x: halfWidth, y: 0)
-        case .bottomTrailing: return CGPoint(x: halfWidth, y: halfHeight)
-        case .bottom: return CGPoint(x: 0, y: halfHeight)
-        case .bottomLeading: return CGPoint(x: -halfWidth, y: halfHeight)
-        case .leading: return CGPoint(x: -halfWidth, y: 0)
-        case .topLeading: return CGPoint(x: -halfWidth, y: -halfHeight)
-        case .top: return CGPoint(x: 0, y: -halfHeight)
-        }
-    }
-
     private func createNodeMarker(at point: CGPoint, color: Color) -> some View {
         ZStack {
             Circle()
@@ -248,7 +222,7 @@ struct EdgeView: View {
         }
     }
 
-    private func horizontalOffset(for placement: EdgePlacement) -> CGFloat {
+    private func horizontalOffset(for placement: EdgeAnchorPlacement) -> CGFloat {
         switch placement {
         case .trailing: 16
         case .leading: -16
@@ -258,7 +232,7 @@ struct EdgeView: View {
         }
     }
     
-    private func verticalOffset(for placement: EdgePlacement) -> CGFloat {
+    private func verticalOffset(for placement: EdgeAnchorPlacement) -> CGFloat {
         switch placement {
         case .top: -16
         default: .zero
@@ -300,8 +274,8 @@ struct EdgeView: View {
     }
 }
 
-extension EdgePlacement {
-    func opposite(basedOn direction: EdgeDirection) -> EdgePlacement {
+extension EdgeAnchorPlacement {
+    func opposite(basedOn direction: EdgeDirection) -> EdgeAnchorPlacement {
         switch self {
         case .trailing:
             switch direction {

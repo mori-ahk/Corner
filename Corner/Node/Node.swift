@@ -18,7 +18,7 @@ struct Node: Identifiable, Equatable {
         guard case let .node(nodeDecl) = astNode else { return nil }
         self.id = nodeDecl.id
         self.color = .black
-        var avaliableEdgePlacement = EdgePlacement.allCases
+        var avaliableEdgePlacement = EdgeAnchorPlacement.allCases
         self.edges = nodeDecl.edges.compactMap { Edge(from: $0, placement: avaliableEdgePlacement.removeFirst()) }
         
         if let attribute = nodeDecl.attribute {
@@ -51,7 +51,7 @@ struct Node: Identifiable, Equatable {
     }
 }
 
-enum EdgePlacement: CaseIterable {
+enum EdgeAnchorPlacement: CaseIterable {
     case topTrailing
     case trailing
     case bottomTrailing

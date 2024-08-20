@@ -14,9 +14,9 @@ struct Edge: Identifiable, Equatable {
     let to: String
     var color: Color
     var label: String
-    var placement: EdgePlacement
+    var placement: EdgeAnchorPlacement
     
-    init?(from edgeDecl: ASTNode.EdgeDecl, placement: EdgePlacement) {
+    init?(from edgeDecl: ASTNode.EdgeDecl, placement: EdgeAnchorPlacement) {
         self.from = edgeDecl.from
         self.to = edgeDecl.to
         self.color = .black
