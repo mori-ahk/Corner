@@ -47,8 +47,8 @@ struct EdgeView: View {
         self.hOffset = .zero
         self.vOffset = .zero
         self.intermidiatePoints = []
-        self.hOffset = horizontalOffset(for: edge.placement)
-        self.vOffset = verticalOffset(for: edge.placement)
+        self.hOffset = edge.placement.horizontalOffset(startNodeSize)
+        self.vOffset = edge.placement.verticalOffset
         if adjustedPoints.start.y == adjustedPoints.end.y {
 //            print("Adding adjusted")
             self.diagramViewModel.addPoint(adjustedPoints.start)
@@ -219,23 +219,6 @@ struct EdgeView: View {
         case .top:
             return CGPoint(x: adjustedPoints.start.x + hOffset, y: adjustedPoints.end.y)
         default: return .zero
-        }
-    }
-
-    private func horizontalOffset(for placement: EdgeAnchorPlacement) -> CGFloat {
-        switch placement {
-        case .trailing: 16
-        case .leading: -16
-        case .top: -(startNodeSize.width / 2) - 24
-        case .topLeading: -24
-        default: .zero
-        }
-    }
-    
-    private func verticalOffset(for placement: EdgeAnchorPlacement) -> CGFloat {
-        switch placement {
-        case .top: -16
-        default: .zero
         }
     }
 

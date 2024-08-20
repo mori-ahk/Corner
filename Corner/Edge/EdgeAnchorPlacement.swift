@@ -16,6 +16,23 @@ enum EdgeAnchorPlacement: CaseIterable {
     case leading
     case topLeading
     case top
+    
+    func horizontalOffset(_ nodeSize: CGSize) -> CGFloat {
+        switch self {
+        case .trailing: 16
+        case .leading: -16
+        case .top: -(nodeSize.width / 2) - 24
+        case .topLeading: -24
+        default: .zero
+        }
+    }
+    
+    var verticalOffset: CGFloat {
+        switch self {
+        case .top: -16
+        default: .zero
+        }
+    }
 }
 
 extension EdgeAnchorPlacement {
