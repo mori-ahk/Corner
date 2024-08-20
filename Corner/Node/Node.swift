@@ -51,13 +51,3 @@ struct Node: Identifiable, Equatable {
     }
 }
 
-enum EdgeAnchorPlacement: CaseIterable {
-    case topTrailing
-    case trailing
-    case bottomTrailing
-    case bottom
-    case bottomLeading
-    case leading
-    case topLeading
-    case top
-}

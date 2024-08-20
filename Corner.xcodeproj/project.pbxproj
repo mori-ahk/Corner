@@ -16,6 +16,9 @@
 		826FF04D2C60580B00559DED /* CornerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826FF04C2C60580B00559DED /* CornerUITestsLaunchTests.swift */; };
 		826FF05B2C60597300559DED /* CornerParser in Frameworks */ = {isa = PBXBuildFile; productRef = 826FF05A2C60597300559DED /* CornerParser */; };
 		8270430E2C74EC1300E2BCE9 /* EdgeDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8270430D2C74EC1300E2BCE9 /* EdgeDescriptor.swift */; };
+		827043102C7512CA00E2BCE9 /* EdgeAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8270430F2C7512CA00E2BCE9 /* EdgeAnchor.swift */; };
+		827043122C7512DA00E2BCE9 /* EdgeDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827043112C7512DA00E2BCE9 /* EdgeDirection.swift */; };
+		827043142C7512F800E2BCE9 /* EdgeAnchorPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827043132C7512F800E2BCE9 /* EdgeAnchorPlacement.swift */; };
 		8273F6662C62621D00B589A7 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8273F6652C62621D00B589A7 /* Node.swift */; };
 		8273F6682C62624400B589A7 /* Edge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8273F6672C62624400B589A7 /* Edge.swift */; };
 		8273F66A2C62626300B589A7 /* Diagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8273F6692C62626300B589A7 /* Diagram.swift */; };
@@ -60,6 +63,9 @@
 		826FF04A2C60580B00559DED /* CornerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerUITests.swift; sourceTree = "<group>"; };
 		826FF04C2C60580B00559DED /* CornerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		8270430D2C74EC1300E2BCE9 /* EdgeDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeDescriptor.swift; sourceTree = "<group>"; };
+		8270430F2C7512CA00E2BCE9 /* EdgeAnchor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeAnchor.swift; sourceTree = "<group>"; };
+		827043112C7512DA00E2BCE9 /* EdgeDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeDirection.swift; sourceTree = "<group>"; };
+		827043132C7512F800E2BCE9 /* EdgeAnchorPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeAnchorPlacement.swift; sourceTree = "<group>"; };
 		8273F6652C62621D00B589A7 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		8273F6672C62624400B589A7 /* Edge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Edge.swift; sourceTree = "<group>"; };
 		8273F6692C62626300B589A7 /* Diagram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diagram.swift; sourceTree = "<group>"; };
@@ -177,6 +183,9 @@
 				8273F6672C62624400B589A7 /* Edge.swift */,
 				8273F66F2C6262C100B589A7 /* EdgeView.swift */,
 				8270430D2C74EC1300E2BCE9 /* EdgeDescriptor.swift */,
+				8270430F2C7512CA00E2BCE9 /* EdgeAnchor.swift */,
+				827043112C7512DA00E2BCE9 /* EdgeDirection.swift */,
+				827043132C7512F800E2BCE9 /* EdgeAnchorPlacement.swift */,
 			);
 			path = Edge;
 			sourceTree = "<group>";
@@ -353,10 +362,13 @@
 				8273F6662C62621D00B589A7 /* Node.swift in Sources */,
 				8273F6732C6262E600B589A7 /* DiagramLayout.swift in Sources */,
 				826FF0312C60580A00559DED /* ContentView.swift in Sources */,
+				827043142C7512F800E2BCE9 /* EdgeAnchorPlacement.swift in Sources */,
+				827043122C7512DA00E2BCE9 /* EdgeDirection.swift in Sources */,
 				8273F6702C6262C100B589A7 /* EdgeView.swift in Sources */,
 				829DFA642C693368005E4671 /* InputTextView.swift in Sources */,
 				8273F66D2C6262A300B589A7 /* NodeView.swift in Sources */,
 				8273F6682C62624400B589A7 /* Edge.swift in Sources */,
+				827043102C7512CA00E2BCE9 /* EdgeAnchor.swift in Sources */,
 				8273F66A2C62626300B589A7 /* Diagram.swift in Sources */,
 				829DFA6C2C6A804B005E4671 /* Color+Extensions.swift in Sources */,
 				826FF02F2C60580A00559DED /* CornerApp.swift in Sources */,
