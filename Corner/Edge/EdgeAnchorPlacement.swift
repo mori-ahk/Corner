@@ -17,11 +17,11 @@ enum EdgeAnchorPlacement: CaseIterable {
     case topLeading
     case top
     
-    func horizontalOffset(_ nodeSize: CGSize) -> CGFloat {
+    func horizontalOffset(_ nodeSize: CGSize? = nil) -> CGFloat {
         switch self {
         case .trailing: 16
         case .leading: -16
-        case .top: -(nodeSize.width / 2) - 24
+        case .top: -(nodeSize?.width ?? .zero / 2) - 24
         case .topLeading: -24
         default: .zero
         }

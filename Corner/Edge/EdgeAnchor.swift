@@ -5,7 +5,7 @@
 //  Created by Mori Ahmadi on 2024-08-20.
 //
 
-import Foundation
+import SwiftUI
 
 struct EdgeAnchor {
     let origin: CGPoint
@@ -15,17 +15,17 @@ struct EdgeAnchor {
     var adjustedPoint: CGPoint
     let color: Color?
 
-    init(origin: CGPoint, size: CGSize, color: Color? = nil) {
+    init(origin: CGPoint, size: CGSize, placement: EdgeAnchorPlacement, color: Color? = nil) {
         self.origin = origin
         self.size = size
         self.color = color
         center = CGPoint(x: origin.x + size.width / 2, y: origin.y + size.height / 2)
-        self.placement = .top
+        self.placement = placement
         self.adjustedPoint = .zero
     }
     
     init(_ anchor: EdgeAnchor, _ placement: EdgeAnchorPlacement) {
-        self.init(origin: anchor.origin, size: anchor.size, color: anchor.color)
+        self.init(origin: anchor.origin, size: anchor.size, placement: placement, color: anchor.color)
         self.adjustedPoint = .zero
         self.adjustedPoint = calculateAdjustedPoint(placement: placement)
     }

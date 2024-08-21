@@ -7,15 +7,17 @@
 
 import SwiftUI
 import CornerParser
+import Combine
 
 class DiagramViewModel: ObservableObject {
     
     private let parser = CornerParser()
-    
-    var allIntermidiatePoints: Set<CGPoint> = Set()
+    private var edgePathResolver = EdgePathResolver()
+    @Published var allPaths: [UUID : [CGPoint]] = [:]
+    @Published var allEdgeDescriptors: [UUID : EdgeDescriptor?] = [:]
     @Published var allNodeBounds: [Node.ID: CGRect] = [:]
     @Published var diagram: Diagram = Diagram()
-    
+
     @MainActor
     func diagram(for input: String) throws {
         do {
@@ -31,15 +33,32 @@ class DiagramViewModel: ObservableObject {
             throw error
         }
     }
-    
-    func addPoint(_ point: CGPoint) {
-        self.allIntermidiatePoints.insert(CGPoint(x: CGFloat(Int(point.x)), y: CGFloat(Int(point.y))))
-    }
-    
-    @MainActor
+   
+    @MainActor 
     func bounds(from proxy: GeometryProxy, given nodesBounds: [Node.ID: Anchor<CGRect>]) {
+        clearAll()
+        guard !diagram.nodes.isEmpty else { return }
+        
         for (key, value) in nodesBounds {
             allNodeBounds[key, default: .zero] = proxy[value]
+        }
+        
+        edgePathResolver.allNodeBounds = allNodeBounds
+        
+        for node in diagram.flattenNodes {
+            for edge in node.edges {
+                allEdgeDescriptors[edge.id] = descriptor(for: edge, with: node.color)
+            }
+        }
+        
+        for (index, layer) in diagram.layeredNodes.enumerated() {
+            for node in layer {
+                for edge in node.edges {
+                    if let descriptor = allEdgeDescriptors[edge.id, default: nil] {
+                        allPaths[edge.id, default: []] = resolvePath(from: descriptor.start, to: descriptor.end, layerIndex: index)
+                    }
+                }
+            }
         }
     }
    
@@ -50,14 +69,29 @@ class DiagramViewModel: ObservableObject {
             start: EdgeAnchor(
                 origin: start.origin,
                 size: start.size,
+                placement: edge.placement,
                 color: startColor
             ),
             end: EdgeAnchor(
                 origin: end.origin,
-                size: end.size
+                size: end.size,
+                placement: edge.placement
             ),
             placement: edge.placement
         )
+    }
+    
+    func resolvePath(from start: EdgeAnchor, to end: EdgeAnchor, layerIndex: Int) -> [CGPoint] {
+        let pathPonits = edgePathResolver.resolvePath(from: start, to: end, layerIndex: layerIndex)
+        return pathPonits
+    }
+    
+    @MainActor
+    private func clearAll() {
+        allPaths.removeAll(keepingCapacity: true)
+        allEdgeDescriptors.removeAll(keepingCapacity: true)
+        allNodeBounds.removeAll(keepingCapacity: true)
+        edgePathResolver.clearAll()
     }
 }
 

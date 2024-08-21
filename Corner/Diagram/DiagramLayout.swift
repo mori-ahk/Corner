@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DiagramLayout: Layout {
     var nodes: [[Node]]
+    var diagram: Diagram
     
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         guard !subviews.isEmpty else { return .zero }
@@ -25,6 +26,11 @@ struct DiagramLayout: Layout {
         for (index, layer) in nodes.enumerated() {
             var y = bounds.minY
             for node in layer {
+                let incomingEdgesCount = node.incomingEdgesCount(diagram)
+                if incomingEdgesCount > 2 {
+                    y += CGFloat(32 * (incomingEdgesCount - 1))
+                }
+                
                 subviews[subviewIndex].place(
                     at: CGPoint(x: x, y: y),
                     anchor: .leading,
