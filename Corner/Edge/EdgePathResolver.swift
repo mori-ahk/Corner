@@ -20,33 +20,57 @@ class EdgePathResolver {
         var result: [CGPoint] = []
 //        guard start.adjustedPoint.y != end.adjustedPoint.y else { return [start.adjustedPoint, end.adjustedPoint] }
         result.append(start.adjustedPoint)
-        var firstPoint = nextPoint(start.adjustedPoint, end.adjustedPoint, start.placement)
-        while aNodeIntersect(with: firstPoint) {
-            firstPoint.x += 16
+        var firstIntermidiatePoint = firstPoint(start.adjustedPoint, end.adjustedPoint, start.placement)
+        while aNodeIntersect(with: firstIntermidiatePoint) {
+            firstIntermidiatePoint.x += 16
         }
         
-        var edgeIntersection = anEdgeIntersect(with: firstPoint, at: layerIndex)
+        var edgeIntersection = anEdgeIntersect(with: firstIntermidiatePoint, at: layerIndex)
        
         while edgeIntersection.hasSameX {
-            firstPoint.x += 8
-            edgeIntersection = anEdgeIntersect(with: firstPoint, at: layerIndex)
+            firstIntermidiatePoint.x += 8
+            edgeIntersection = anEdgeIntersect(with: firstIntermidiatePoint, at: layerIndex)
         }
         
         while edgeIntersection.hasSameY {
-            firstPoint.y += 8
-            edgeIntersection = anEdgeIntersect(with: firstPoint, at: layerIndex)
+            firstIntermidiatePoint.y += 8
+            edgeIntersection = anEdgeIntersect(with: firstIntermidiatePoint, at: layerIndex)
         }
         
-        result.append(firstPoint)
+        result.append(firstIntermidiatePoint)
         
         // calcuate the second intermidiate point
-        if firstPoint.y != end.adjustedPoint.y {
-            result.append(end.adjustedPoint)
+        var secondIntermidiatePoint: CGPoint?
+        if firstIntermidiatePoint.y != end.adjustedPoint.y {
+            secondIntermidiatePoint = secondPoint(firstIntermidiatePoint, end.adjustedPoint, end.placement)
+            if var point = secondIntermidiatePoint {
+                while aNodeIntersect(with: point) {
+                    point.x += 16
+                }
+                
+                var edgeIntersection = anEdgeIntersect(with: point, at: layerIndex)
+                
+                while edgeIntersection.hasSameX {
+                    point.x += 8
+                    edgeIntersection = anEdgeIntersect(with: point, at: layerIndex)
+                }
+                
+                while edgeIntersection.hasSameY {
+                    point.y += 8
+                    edgeIntersection = anEdgeIntersect(with: point, at: layerIndex)
+                }
+                
+                result.append(point)
+                secondIntermidiatePoint = point
+            }
         }
         
         result.append(end.adjustedPoint)
         
-        addIntermidiatePoint(firstPoint, to: layerIndex)
+        addIntermidiatePoint(firstIntermidiatePoint, to: layerIndex)
+        if let secondIntermidiatePoint {
+            addIntermidiatePoint(secondIntermidiatePoint, to: layerIndex)
+        }
         addIntermidiatePoint(end.adjustedPoint, to: layerIndex)
         return result
     }
@@ -59,7 +83,7 @@ class EdgePathResolver {
         return false
     }
     
-    private func nextPoint(
+    private func firstPoint(
         _ start: CGPoint,
         _ end: CGPoint,
         _ placement: EdgeAnchorPlacement
@@ -71,12 +95,10 @@ class EdgePathResolver {
         let vOffset = placement.verticalOffset
         switch placement {
         case .topTrailing:
-            return CGPoint(x: xStart, y: yEnd)
+            return CGPoint(x: xStart + hOffset, y: yStart)
         case .trailing, .leading:
             return CGPoint(x: xStart + hOffset, y: yStart)
-        case .bottomTrailing:
-            return CGPoint(x: xStart, y: yEnd)
-        case .bottom, .bottomLeading:
+        case .bottom, .bottomLeading, .bottomTrailing:
             return CGPoint(x: xStart, y: yEnd)
         case .topLeading:
             return CGPoint(x: xStart + hOffset, y: yStart)
@@ -85,6 +107,19 @@ class EdgePathResolver {
         }
     }
     
+    private func secondPoint(
+        _ start: CGPoint,
+        _ end: CGPoint,
+        _ placement: EdgeAnchorPlacement
+    ) -> CGPoint {
+        let xStart = start.x
+        let yStart = start.y
+        let yEnd = end.y
+        let hOffset = placement.horizontalOffset()
+        let vOffset = placement.verticalOffset
+        return CGPoint(x: xStart, y: yEnd)
+    }
+
     private func anEdgeIntersect(with point: CGPoint, at layerIndex: Int) -> (hasSameX: Bool, hasSameY: Bool) {
         let hasSameX = allIntermidiatePoints[layerIndex, default: []].contains { $0.x == point.x }
         let hasSameY = allIntermidiatePoints[layerIndex, default: []].contains { $0.y == point.y }

@@ -27,8 +27,8 @@ struct DiagramLayout: Layout {
             var y = bounds.minY
             for node in layer {
                 let incomingEdgesCount = node.incomingEdgesCount(diagram)
-                if incomingEdgesCount > 2 {
-                    y += CGFloat(32 * (incomingEdgesCount - 1))
+                if incomingEdgesCount > 1 {
+                    y += CGFloat(32 * (incomingEdgesCount / 2))
                 }
                 
                 subviews[subviewIndex].place(
@@ -39,7 +39,7 @@ struct DiagramLayout: Layout {
                 
                 subviewIndex += 1
                 if node.edges.count > 2 {
-                    y += CGFloat(64 * (node.edges.count - 1))
+                    y += CGFloat(64 * (node.edges.count))
                 } else {
                     y += 64
                 }
