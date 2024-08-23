@@ -17,9 +17,11 @@ class DiagramViewModel: ObservableObject {
     @Published var allEdgeDescriptors: [UUID : EdgeDescriptor?] = [:]
     @Published var allNodeBounds: [Node.ID: CGRect] = [:]
     @Published var diagram: Diagram = Diagram()
-
+    @Published var state: DiagramState = .idle
+    
     @MainActor
     func diagram(for input: String) throws {
+        state = .loading
         do {
             let ast = try parser.parse(input)
             switch ast {
@@ -29,21 +31,22 @@ class DiagramViewModel: ObservableObject {
                 self.diagram = Diagram(nodes: nodes)
             default: break
             }
+            state = .loaded
         } catch {
             throw error
         }
     }
-   
+
     @MainActor 
     func bounds(from proxy: GeometryProxy, given nodesBounds: [Node.ID: Anchor<CGRect>]) {
-        clearAll()
         guard !diagram.nodes.isEmpty else { return }
         
+        state = .loading
         for (key, value) in nodesBounds {
             allNodeBounds[key, default: .zero] = proxy[value]
         }
         
-        edgePathResolver.allNodeBounds = allNodeBounds
+        edgePathResolver.setNodeBounds(allNodeBounds)
         
         for node in diagram.flattenNodes {
             for edge in node.edges {
@@ -60,9 +63,17 @@ class DiagramViewModel: ObservableObject {
                 }
             }
         }
+        
+        state = .loaded
     }
    
-    func descriptor(for edge: Edge, with startColor: Color) -> EdgeDescriptor? {
+    @MainActor 
+    func clear() {
+        clearAll()
+        diagram = Diagram()
+    }
+    
+    private func descriptor(for edge: Edge, with startColor: Color) -> EdgeDescriptor? {
         guard let start = allNodeBounds[edge.from],
               let end = allNodeBounds[edge.to] else { return nil }
         return EdgeDescriptor(
@@ -81,7 +92,7 @@ class DiagramViewModel: ObservableObject {
         )
     }
     
-    func resolvePath(from start: EdgeAnchor, to end: EdgeAnchor, layerIndex: Int) -> [CGPoint] {
+    private func resolvePath(from start: EdgeAnchor, to end: EdgeAnchor, layerIndex: Int) -> [CGPoint] {
         let pathPonits = edgePathResolver.resolvePath(from: start, to: end, layerIndex: layerIndex)
         return pathPonits
     }
@@ -100,4 +111,10 @@ extension CGPoint: Hashable {
         hasher.combine(Int(x))
         hasher.combine(Int(y))
     }
+}
+
+enum DiagramState {
+    case idle
+    case loading
+    case loaded
 }

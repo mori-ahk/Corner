@@ -8,7 +8,7 @@
 import Foundation
 
 class EdgePathResolver {
-    var allNodeBounds: [Node.ID : CGRect]
+    private var allNodeBounds: [Node.ID : CGRect]
     private var allIntermidiatePoints: [Int : [CGPoint]]
     
     init() {
@@ -18,61 +18,55 @@ class EdgePathResolver {
     
     func resolvePath(from start: EdgeAnchor, to end: EdgeAnchor, layerIndex: Int) -> [CGPoint] {
         var result: [CGPoint] = []
-//        guard start.adjustedPoint.y != end.adjustedPoint.y else { return [start.adjustedPoint, end.adjustedPoint] }
         result.append(start.adjustedPoint)
-        var firstIntermidiatePoint = firstPoint(start.adjustedPoint, end.adjustedPoint, start.placement)
-        while aNodeIntersect(with: firstIntermidiatePoint) {
-            firstIntermidiatePoint.x += 16
-        }
         
-        var edgeIntersection = anEdgeIntersect(with: firstIntermidiatePoint, at: layerIndex)
-       
-        while edgeIntersection.hasSameX {
-            firstIntermidiatePoint.x += 8
-            edgeIntersection = anEdgeIntersect(with: firstIntermidiatePoint, at: layerIndex)
-        }
+        // Calculate the first intermediate point
+        var firstIntermediatePoint = calculateAdjustedPoint(
+            initialPoint: firstPoint(start.adjustedPoint, end.adjustedPoint, start.placement),
+            layerIndex: layerIndex
+        )
         
-        while edgeIntersection.hasSameY {
-            firstIntermidiatePoint.y += 8
-            edgeIntersection = anEdgeIntersect(with: firstIntermidiatePoint, at: layerIndex)
-        }
+        result.append(firstIntermediatePoint)
         
-        result.append(firstIntermidiatePoint)
-        
-        // calcuate the second intermidiate point
-        var secondIntermidiatePoint: CGPoint?
-        if firstIntermidiatePoint.y != end.adjustedPoint.y {
-            secondIntermidiatePoint = secondPoint(firstIntermidiatePoint, end.adjustedPoint, end.placement)
-            if var point = secondIntermidiatePoint {
-                while aNodeIntersect(with: point) {
-                    point.x += 16
-                }
-                
-                var edgeIntersection = anEdgeIntersect(with: point, at: layerIndex)
-                
-                while edgeIntersection.hasSameX {
-                    point.x += 8
-                    edgeIntersection = anEdgeIntersect(with: point, at: layerIndex)
-                }
-                
-                while edgeIntersection.hasSameY {
-                    point.y += 8
-                    edgeIntersection = anEdgeIntersect(with: point, at: layerIndex)
-                }
-                
-                result.append(point)
-                secondIntermidiatePoint = point
+        // Calculate the second intermediate point if needed
+        if firstIntermediatePoint.y != end.adjustedPoint.y {
+            if var secondIntermediatePoint = secondPoint(firstIntermediatePoint, end.adjustedPoint, end.placement) {
+                secondIntermediatePoint = calculateAdjustedPoint(initialPoint: secondIntermediatePoint, layerIndex: layerIndex)
+                result.append(secondIntermediatePoint)
+                addIntermediatePoint(secondIntermediatePoint, to: layerIndex)
             }
         }
         
         result.append(end.adjustedPoint)
         
-        addIntermidiatePoint(firstIntermidiatePoint, to: layerIndex)
-        if let secondIntermidiatePoint {
-            addIntermidiatePoint(secondIntermidiatePoint, to: layerIndex)
-        }
-        addIntermidiatePoint(end.adjustedPoint, to: layerIndex)
+        addIntermediatePoint(firstIntermediatePoint, to: layerIndex)
+        addIntermediatePoint(end.adjustedPoint, to: layerIndex)
+        
         return result
+    }
+
+    private func calculateAdjustedPoint(initialPoint: CGPoint, layerIndex: Int) -> CGPoint {
+        var point = initialPoint
+        
+        // Adjust for node intersection
+        while aNodeIntersect(with: point) {
+            point.x += 16
+        }
+        
+        // Adjust for edge intersection
+        var edgeIntersection = anEdgeIntersect(with: point, at: layerIndex)
+        
+        while edgeIntersection.hasSameX {
+            point.x += 8
+            edgeIntersection = anEdgeIntersect(with: point, at: layerIndex)
+        }
+        
+        while edgeIntersection.hasSameY {
+            point.y += 8
+            edgeIntersection = anEdgeIntersect(with: point, at: layerIndex)
+        }
+        
+        return point
     }
     
     private func aNodeIntersect(with point: CGPoint) -> Bool {
@@ -111,7 +105,7 @@ class EdgePathResolver {
         _ start: CGPoint,
         _ end: CGPoint,
         _ placement: EdgeAnchorPlacement
-    ) -> CGPoint {
+    ) -> CGPoint? {
         let xStart = start.x
         let yStart = start.y
         let yEnd = end.y
@@ -125,8 +119,8 @@ class EdgePathResolver {
         let hasSameY = allIntermidiatePoints[layerIndex, default: []].contains { $0.y == point.y }
         return (hasSameX, hasSameY)
     }
-    
-    func addIntermidiatePoint(_ point: CGPoint, to layerIndex: Int) {
+        
+    private func addIntermediatePoint(_ point: CGPoint, to layerIndex: Int) {
         if !allIntermidiatePoints[layerIndex, default: []].contains(point) {
             allIntermidiatePoints[layerIndex, default: []].append(point)
         }
@@ -135,5 +129,9 @@ class EdgePathResolver {
     func clearAll() {
         allNodeBounds.removeAll(keepingCapacity: true)
         allIntermidiatePoints.removeAll(keepingCapacity: true)
+    }
+    
+    func setNodeBounds(_ nodeBounds: [Node.ID : CGRect]) {
+        self.allNodeBounds = nodeBounds
     }
 }

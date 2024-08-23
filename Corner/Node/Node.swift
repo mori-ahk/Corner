@@ -59,7 +59,6 @@ struct Node: Identifiable, Equatable {
                 }
             }
         }
-        print("incoming edge for \(self.id): \(count)")
         return count
     }
 }

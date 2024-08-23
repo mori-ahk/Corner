@@ -47,9 +47,9 @@ struct DiagramLayout: Layout {
             let edgeLabelSizes = layer.flatMap { $0.edges.map { $0.label.count } }
             let maxLabelSize: Double = Double(edgeLabelSizes.max() ?? .zero)
             if maxLabelSize == .zero {
-                x += maxSize.width + 64
+                x += maxSize.width + 80
             } else {
-                x += maxSize.width + CGFloat(64 + (maxLabelSize * 6))
+                x += maxSize.width + CGFloat(80 + (maxLabelSize * 6))
             }
         }
     }

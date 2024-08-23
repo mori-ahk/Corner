@@ -19,9 +19,16 @@ struct ContentView: View {
     var body: some View {
         HStack {
             inputSection
-            if !vm.diagram.nodes.isEmpty {
-                diagramSection
-                    .transition(.blurReplace)
+            switch vm.state {
+            case .idle: EmptyView()
+            case .loading: 
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            case .loaded:
+                if !vm.diagram.nodes.isEmpty {
+                    diagramSection
+                        .transition(.blurReplace)
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -54,18 +61,22 @@ struct ContentView: View {
     private var actionButtons: some View {
         HStack {
             ActionButton(title: "Generate", color: .blue) {
-                guard previousInput != input else { return }
-                self.previousInput = input
-                vm.diagram = Diagram()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                if !vm.diagram.nodes.isEmpty {
+                    guard previousInput != input else { return }
+                    self.previousInput = input
+                }
+                vm.clear()
+                    
+                Task {
                     do {
+                        try await Task.sleep(nanoseconds: 2_000_000_000)
                         try vm.diagram(for: input)
                     } catch { print(error) }
                 }
             }
             
             ActionButton(title: "Clear", color: .red) {
-                vm.diagram = Diagram()
+                vm.clear()
             }
         }
     }
@@ -76,7 +87,6 @@ struct ContentView: View {
             ZStack(alignment: .topLeading) {
                 diagramLayout
                 edgesLayer(in: proxy)
-                    .transition(.blurReplace)
             }
             .onReceive(vm.$diagram) { _ in
                 vm.bounds(from: proxy, given: nodesBounds)
