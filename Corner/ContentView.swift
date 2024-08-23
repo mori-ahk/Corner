@@ -11,32 +11,32 @@ import CornerParser
 struct ContentView: View {
     @StateObject private var vm = DiagramViewModel()
     @State private var nodesBounds: [Node.ID : Anchor<CGRect>] = [:]
-    @State private var diagram: Diagram?
-    @State private var layeredNodes: [[Node]] = []
-    @State private var nodes: [Node] = []
     @State private var input: String = ""
-    
+    @State private var previousInput: String = ""
+    @State private var shouldBuildDiagram: Bool = false
     private typealias Key = CollectDictPrefKey<Node.ID, Anchor<CGRect>>
     
     var body: some View {
         HStack {
             inputSection
-            diagramSection
+            switch vm.state {
+            case .idle: EmptyView()
+            case .loading: 
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            case .loaded:
+                if !vm.diagram.nodes.isEmpty {
+                    diagramSection
+                        .transition(.blurReplace)
+                }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding(UXMetrics.Padding.twentyFour)
-        .onReceive(vm.$diagram) { newDiagram in
-            self.diagram = newDiagram
+        .onPreferenceChange(Key.self) { bounds in
+            self.nodesBounds = bounds
         }
-        .onChange(of: diagram) { oldValue, newValue in
-            if newValue == nil { nodesBounds.removeAll() }
-            layeredNodes = newValue?.layeredNodes() ?? []
-            nodes = newValue?.flattenLayeredNodes() ?? []
-        }
-        .onPreferenceChange(Key.self) {
-            self.nodesBounds = $0
-        }
-        .animation(.default, value: diagram)
+        .animation(.default, value: vm.diagram)
     }
     
     private var inputSection: some View {
@@ -61,32 +61,45 @@ struct ContentView: View {
     private var actionButtons: some View {
         HStack {
             ActionButton(title: "Generate", color: .blue) {
-                do {
-                    try vm.diagram(for: input)
-                } catch { print(error) }
+                if !vm.diagram.nodes.isEmpty {
+                    guard previousInput != input else { return }
+                    self.previousInput = input
+                }
+                vm.clear()
+                    
+                Task {
+                    do {
+                        try await Task.sleep(nanoseconds: 2_000_000_000)
+                        try vm.diagram(for: input)
+                    } catch { print(error) }
+                }
             }
             
             ActionButton(title: "Clear", color: .red) {
-                self.diagram = nil
+                vm.clear()
             }
         }
     }
-    
+   
+    @ViewBuilder
     private var diagramSection: some View {
         GeometryReader { proxy in
             ZStack(alignment: .topLeading) {
                 diagramLayout
                 edgesLayer(in: proxy)
             }
+            .onReceive(vm.$diagram) { _ in
+                vm.bounds(from: proxy, given: nodesBounds)
+            }
         }
         .padding(UXMetrics.Padding.twentyFour)
     }
     
+    @ViewBuilder
     private var diagramLayout: some View {
-        DiagramLayout(nodes: layeredNodes) {
-            ForEach(nodes) { node in
+        DiagramLayout(nodes: vm.diagram.layeredNodes, diagram: vm.diagram) {
+            ForEach(vm.diagram.flattenNodes) { node in
                 NodeView(node: node)
-                    .transition(.blurReplace)
                     .anchorPreference(key: Key.self, value: .bounds) { [node.id: $0] }
             }
         }
@@ -94,19 +107,14 @@ struct ContentView: View {
     
     @ViewBuilder
     private func edgesLayer(in proxy: GeometryProxy) -> some View {
-        ForEach(nodes) { node in
+        ForEach(vm.diagram.flattenNodes) { node in
             ForEach(node.edges) { edge in
-                if let startAnchor = nodesBounds[edge.from],
-                   let endAnchor = nodesBounds[edge.to],
-                   let endNode = nodes.first(where: { $0.id == edge.to }) {
+                if let edgeDescriptor = vm.allEdgeDescriptors[edge.id, default: nil],
+                   let paths = vm.allPaths[edge.id] {
                     EdgeView(
                         edge: edge,
-                        startPoint: proxy[startAnchor].origin,
-                        endPoint: proxy[endAnchor].origin,
-                        startNodeSize: proxy[startAnchor].size,
-                        endNodeSize: proxy[endAnchor].size,
-                        startColor: node.color,
-                        endColor: endNode.color
+                        edgeDescriptor: edgeDescriptor,
+                        intermidiatePoints: paths
                     )
                 }
             }

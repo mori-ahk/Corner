@@ -18,7 +18,7 @@ struct Node: Identifiable, Equatable {
         guard case let .node(nodeDecl) = astNode else { return nil }
         self.id = nodeDecl.id
         self.color = .black
-        var avaliableEdgePlacement = EdgePlacement.allCases
+        var avaliableEdgePlacement = EdgeAnchorPlacement.allCases
         self.edges = nodeDecl.edges.compactMap { Edge(from: $0, placement: avaliableEdgePlacement.removeFirst()) }
         
         if let attribute = nodeDecl.attribute {
@@ -49,15 +49,17 @@ struct Node: Identifiable, Equatable {
         default: .teal
         }
     }
+    
+    func incomingEdgesCount(_ diagram: Diagram) -> Int {
+        var count: Int = .zero
+        for node in diagram.nodes {
+            for edge in node.edges {
+                if edge.to == self.id {
+                    count += 1
+                }
+            }
+        }
+        return count
+    }
 }
 
-enum EdgePlacement: CaseIterable {
-    case topTrailing
-    case trailing
-    case bottomTrailing
-    case bottom
-    case bottomLeading
-    case leading
-    case topLeading
-    case top
-}
