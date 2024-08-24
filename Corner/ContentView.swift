@@ -13,12 +13,15 @@ struct ContentView: View {
     @State private var nodesBounds: [Node.ID : Anchor<CGRect>] = [:]
     @State private var input: String = ""
     @State private var previousInput: String = ""
-    @State private var shouldBuildDiagram: Bool = false
+    @State private var shouldHideInputView: Bool = false
     private typealias Key = CollectDictPrefKey<Node.ID, Anchor<CGRect>>
     
     var body: some View {
         HStack {
-            inputSection
+            if !shouldHideInputView {
+                inputSection
+                    .transition(.move(edge: .leading).combined(with: .blurReplace))
+            }
             switch vm.state {
             case .idle: EmptyView()
             case .loading: 
@@ -37,6 +40,7 @@ struct ContentView: View {
             self.nodesBounds = bounds
         }
         .animation(.default, value: vm.diagram)
+        .animation(.default, value: shouldHideInputView)
     }
     
     private var inputSection: some View {
@@ -93,6 +97,19 @@ struct ContentView: View {
             }
         }
         .padding(UXMetrics.Padding.twentyFour)
+        .overlay(alignment: .leading) {
+            Button {
+                shouldHideInputView.toggle()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .padding()
+                    .background()
+                    .clipShape(.circle)
+                    .shadow(radius: UXMetrics.ShadowRadius.four)
+                    .rotationEffect(shouldHideInputView ? Angle(degrees: 180) : .zero)
+            }
+            .buttonStyle(.plain)
+        }
     }
     
     @ViewBuilder
