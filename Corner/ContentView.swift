@@ -46,7 +46,7 @@ struct ContentView: View {
                 .fontWeight(.semibold)
             InputTextView(
                 text: $input,
-                textColor: .black
+                textColor: .labelColor
             )
             Divider()
             actionButtons
