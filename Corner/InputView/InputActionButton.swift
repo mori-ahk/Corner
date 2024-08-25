@@ -15,9 +15,11 @@ struct ActionButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
+                .font(.headline)
+                .fontWeight(.medium)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding()
-                .foregroundStyle(.background)
+                .foregroundStyle(.white)
                 .background {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(color)
