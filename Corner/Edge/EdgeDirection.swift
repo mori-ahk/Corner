@@ -9,6 +9,8 @@ import Foundation
 
 enum EdgeDirection {
     case up
+    case slightlyUp
     case down
+    case slightlyDown
     case leftOrRight
 }

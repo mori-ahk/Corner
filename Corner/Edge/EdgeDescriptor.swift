@@ -14,9 +14,17 @@ struct EdgeDescriptor {
     
     init(start: EdgeAnchor, end: EdgeAnchor, placement: EdgeAnchorPlacement) {
         if start.center.y < end.center.y {
-            self.direction = .down
+            if abs(start.center.y - end.center.y) < 64 {
+                self.direction = .slightlyDown
+            } else {
+                self.direction = .down
+            }
         } else if start.center.y > end.center.y {
-            self.direction = .up
+            if abs(start.center.y - end.center.y) < 64 {
+                self.direction = .slightlyUp
+            } else {
+                self.direction = .up
+            }
         } else {
             self.direction = .leftOrRight
         }
