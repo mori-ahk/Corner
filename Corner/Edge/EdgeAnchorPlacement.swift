@@ -49,8 +49,7 @@ extension EdgeAnchorPlacement {
         case .bottomTrailing:
             switch direction {
             case .down: return .topLeading
-            case .up: return .bottomLeading
-            default: return .leading
+            default: return .bottomLeading
             }
         default:
             switch direction {
