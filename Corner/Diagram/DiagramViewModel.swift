@@ -48,9 +48,15 @@ class DiagramViewModel: ObservableObject {
         
         edgePathResolver.setNodeBounds(allNodeBounds)
         
-        for node in diagram.flattenNodes {
-            for edge in node.edges {
-                allEdgeDescriptors[edge.id] = descriptor(for: edge, with: node.color)
+        for (index, layer) in diagram.layeredNodes.enumerated() {
+            for (nodeIndex, node) in layer.enumerated() {
+                for edge in node.edges {
+                    var hasCrossOver: Bool = false
+                    if let i = layer.firstIndex(where: { $0.id == edge.to }) {
+                        hasCrossOver = abs(i - nodeIndex) > 1
+                    }
+                    allEdgeDescriptors[edge.id] = descriptor(for: edge, with: node.color, hasCrossOver)
+                }
             }
         }
         
@@ -73,22 +79,13 @@ class DiagramViewModel: ObservableObject {
         diagram = Diagram()
     }
     
-    private func descriptor(for edge: Edge, with startColor: Color) -> EdgeDescriptor? {
+    private func descriptor(for edge: Edge, with startColor: Color, _ hasCrossOver: Bool) -> EdgeDescriptor? {
         guard let start = allNodeBounds[edge.from],
               let end = allNodeBounds[edge.to] else { return nil }
         return EdgeDescriptor(
-            start: EdgeAnchor(
-                origin: start.origin,
-                size: start.size,
-                placement: edge.placement,
-                color: startColor
-            ),
-            end: EdgeAnchor(
-                origin: end.origin,
-                size: end.size,
-                placement: edge.placement
-            ),
-            placement: edge.placement
+            start: EdgeAnchor(origin: start.origin, size: start.size, color: startColor),
+            end: EdgeAnchor(origin: end.origin, size: end.size),
+            hasCrossOver
         )
     }
     

@@ -23,6 +23,7 @@ enum EdgeAnchorPlacement: CaseIterable {
         case .leading: -16
         case .top: -(nodeSize?.width ?? .zero / 2) - 24
         case .topLeading: -24
+        case .bottom: -16
         default: .zero
         }
     }
@@ -30,30 +31,27 @@ enum EdgeAnchorPlacement: CaseIterable {
     var verticalOffset: CGFloat {
         switch self {
         case .top: -16
+        case .bottom: 16
         default: .zero
         }
     }
 }
 
 extension EdgeAnchorPlacement {
-    func opposite(basedOn direction: EdgeDirection) -> EdgeAnchorPlacement {
-        switch self {
-        case .trailing:
-            switch direction {
-            case .up: return .bottomLeading
-            case .down: return .topLeading
-            case .leftOrRight: return .leading
-            }
-        case .bottomTrailing:
-            switch direction {
-            case .down: return .topLeading
-            default: return .bottomLeading
-            }
-        default:
-            switch direction {
-            case .up: return .bottomLeading
-            default: return .topLeading
-            }
+    func opposite(
+        basedOn direction: EdgeAnchorPlacementResolver.FlowDirection,
+        _ hasCrossOver: Bool
+    ) -> EdgeAnchorPlacement? {
+        switch direction {
+        case .east: return .leading
+        case .west: return .trailing
+        case .north: return hasCrossOver ? .bottomTrailing : .bottom
+        case .south: return hasCrossOver ? .topTrailing : .top
+        case .northeast: return .bottomLeading
+        case .northwest: return .bottomTrailing
+        case .southeast: return .topLeading
+        case .southwest: return .topTrailing
+        default: return nil
         }
     }
 }

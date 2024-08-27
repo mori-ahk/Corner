@@ -8,19 +8,22 @@
 import SwiftUI
 
 struct EdgeDescriptor {
-    let start: EdgeAnchor
-    let end: EdgeAnchor
-    var direction: EdgeDirection
+    var start: EdgeAnchor
+    var end: EdgeAnchor
     
-    init(start: EdgeAnchor, end: EdgeAnchor, placement: EdgeAnchorPlacement) {
-        if start.center.y < end.center.y {
-            self.direction = .down
-        } else if start.center.y > end.center.y {
-            self.direction = .up
-        } else {
-            self.direction = .leftOrRight
-        }
-        self.start = EdgeAnchor(start, placement)
-        self.end = EdgeAnchor(end, placement.opposite(basedOn: direction))
+    init(start: EdgeAnchor, end: EdgeAnchor, _ hasCrossOver: Bool) {
+        self.start = start
+        self.end = end
+        
+        let anchorPlacements = EdgeAnchorPlacementResolver(
+            start: start.center,
+            end: end.center,
+            hasCrossOver
+        ).anchorPlacements()
+        
+        self.start.placement = anchorPlacements.start
+        self.end.placement = anchorPlacements.end
+        self.start.calculateAdjustedPoint()
+        self.end.calculateAdjustedPoint()
     }
 }

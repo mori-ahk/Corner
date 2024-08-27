@@ -18,8 +18,7 @@ struct Node: Identifiable, Equatable {
         guard case let .node(nodeDecl) = astNode else { return nil }
         self.id = nodeDecl.id
         self.color = .black
-        var avaliableEdgePlacement = EdgeAnchorPlacement.allCases
-        self.edges = nodeDecl.edges.compactMap { Edge(from: $0, placement: avaliableEdgePlacement.removeFirst()) }
+        self.edges = nodeDecl.edges.compactMap { Edge(from: $0) }
         
         if let attribute = nodeDecl.attribute {
             guard case let .color(colorString) = attribute else {

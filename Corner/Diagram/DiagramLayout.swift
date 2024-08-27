@@ -23,13 +23,23 @@ struct DiagramLayout: Layout {
         var x = bounds.minX
         var subviewIndex = 0
         
-        for (index, layer) in nodes.enumerated() {
-            var y = bounds.minY
-            for node in layer {
+        for layer in nodes {
+            for (nodeIndex, node) in layer.enumerated() {
+                var y = bounds.midY
                 let incomingEdgesCount = node.incomingEdgesCount(diagram)
-                if incomingEdgesCount > 1 {
-                    y += CGFloat(32 * (incomingEdgesCount / 2))
+                let multiplier = nodeIndex - (layer.count / 2)
+                
+                y += CGFloat(64 * multiplier)
+                if node.edges.count > 1 {
+                    y += CGFloat(16 * (node.edges.count) * multiplier)
+                } else {
+                    y += CGFloat(32 * multiplier)
                 }
+                
+                if incomingEdgesCount > 1 {
+                    y += CGFloat(16 * (incomingEdgesCount / 2) * multiplier)
+                }
+                
                 
                 subviews[subviewIndex].place(
                     at: CGPoint(x: x, y: y),
@@ -38,11 +48,7 @@ struct DiagramLayout: Layout {
                 )
                 
                 subviewIndex += 1
-                if node.edges.count > 2 {
-                    y += CGFloat(64 * (node.edges.count))
-                } else {
-                    y += 64
-                }
+                
             }
             let edgeLabelSizes = layer.flatMap { $0.edges.map { $0.label.count } }
             let maxLabelSize: Double = Double(edgeLabelSizes.max() ?? .zero)

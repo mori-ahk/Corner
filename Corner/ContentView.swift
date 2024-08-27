@@ -34,7 +34,7 @@ struct ContentView: View {
                 }
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .padding(UXMetrics.Padding.twentyFour)
         .onPreferenceChange(Key.self) { bounds in
             self.nodesBounds = bounds
@@ -96,8 +96,9 @@ struct ContentView: View {
                 vm.bounds(from: proxy, given: nodesBounds)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .padding(UXMetrics.Padding.twentyFour)
-        .overlay(alignment: .leading) {
+        .overlay(alignment: .topLeading) {
             Button {
                 shouldHideInputView.toggle()
             } label: {

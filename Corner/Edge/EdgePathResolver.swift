@@ -19,7 +19,9 @@ class EdgePathResolver {
     func resolvePath(from start: EdgeAnchor, to end: EdgeAnchor, layerIndex: Int) -> [CGPoint] {
         var result: [CGPoint] = []
         result.append(start.adjustedPoint)
-        
+        if start.placement == .top || start.placement == .bottom {
+            return [start.adjustedPoint, end.adjustedPoint]
+        }
         // Calculate the first intermediate point
         var firstIntermediatePoint = calculateAdjustedPoint(
             initialPoint: firstPoint(start.adjustedPoint, end.adjustedPoint, start.placement),
@@ -30,7 +32,7 @@ class EdgePathResolver {
         
         // Calculate the second intermediate point if needed
         if firstIntermediatePoint.y != end.adjustedPoint.y {
-            if var secondIntermediatePoint = secondPoint(firstIntermediatePoint, end.adjustedPoint, end.placement) {
+            if var secondIntermediatePoint = secondPoint(firstIntermediatePoint, end.adjustedPoint, start.placement) {
                 secondIntermediatePoint = calculateAdjustedPoint(initialPoint: secondIntermediatePoint, layerIndex: layerIndex)
                 result.append(secondIntermediatePoint)
                 addIntermediatePoint(secondIntermediatePoint, to: layerIndex)
@@ -88,11 +90,11 @@ class EdgePathResolver {
         let hOffset = placement.horizontalOffset()
         let vOffset = placement.verticalOffset
         switch placement {
-        case .topTrailing:
+        case .topTrailing, .bottomTrailing:
             return CGPoint(x: xStart + hOffset, y: yStart)
         case .trailing, .leading:
             return CGPoint(x: xStart + hOffset, y: yStart)
-        case .bottom, .bottomLeading, .bottomTrailing:
+        case .bottom, .bottomLeading:
             return CGPoint(x: xStart, y: yEnd)
         case .topLeading:
             return CGPoint(x: xStart + hOffset, y: yStart)
