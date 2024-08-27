@@ -39,10 +39,24 @@ enum EdgeAnchorPlacement: CaseIterable {
 
 extension EdgeAnchorPlacement {
     func opposite(basedOn direction: EdgeDirection) -> EdgeAnchorPlacement {
-        switch direction {
-        case .up: return .bottomLeading
-        case .down: return .topLeading
-        default: return .leading
+        switch self {
+        case .trailing:
+            switch direction {
+            case .down: return .topLeading
+            case .up: return .bottomLeading
+            default: return .leading
+            }
+        case .bottomTrailing:
+            switch direction {
+            case .down: return .topLeading
+            case .up: return .bottomLeading
+            default: return .leading
+            }
+        default:
+            switch direction {
+            case .up: return .bottomLeading
+            default: return .topLeading
+            }
         }
     }
 }

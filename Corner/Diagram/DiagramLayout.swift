@@ -23,17 +23,17 @@ struct DiagramLayout: Layout {
         var x = bounds.minX
         var subviewIndex = 0
         
-        for (index, layer) in nodes.enumerated() {
+        for layer in nodes {
             for (nodeIndex, node) in layer.enumerated() {
                 var y = bounds.midY
                 let incomingEdgesCount = node.incomingEdgesCount(diagram)
                 let multiplier = nodeIndex - (layer.count / 2)
                 
-                y += CGFloat(64 * multiplier * index)
+                y += CGFloat(64 * multiplier)
                 if node.edges.count > 1 {
                     y += CGFloat(16 * (node.edges.count) * multiplier)
                 } else {
-                    y += 32
+                    y += CGFloat(32 * multiplier)
                 }
                 
                 if incomingEdgesCount > 1 {

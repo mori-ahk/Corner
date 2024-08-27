@@ -28,27 +28,7 @@ struct EdgeDescriptor {
         } else {
             self.direction = .leftOrRight
         }
-        
-        var modifiedPlacement: EdgeAnchorPlacement = .topTrailing
-        switch placement {
-        case .topTrailing, .trailing:
-            switch direction {
-            case .up:
-                modifiedPlacement = .topTrailing
-            case .down:
-                modifiedPlacement = .bottomTrailing
-            default: modifiedPlacement = .trailing
-            }
-        case .bottomTrailing:
-            switch direction {
-            case .up:
-                modifiedPlacement = .trailing
-            default: modifiedPlacement = .bottomTrailing
-            }
-        default:
-            modifiedPlacement = placement
-        }
-        self.start = EdgeAnchor(start, modifiedPlacement)
-        self.end = EdgeAnchor(end, modifiedPlacement.opposite(basedOn: direction))
+        self.start = EdgeAnchor(start, placement)
+        self.end = EdgeAnchor(end, placement.opposite(basedOn: direction))
     }
 }
