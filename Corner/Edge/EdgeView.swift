@@ -16,9 +16,6 @@ struct EdgeView: View {
     private let startNodeSize: CGSize
     private let endNodeSize: CGSize
     private let startColor: Color
-    private var hOffset: CGFloat
-    private var vOffset: CGFloat
-    private var direction: EdgeDirection
     private var startNodeCenter: CGPoint
     private var endNodeCenter: CGPoint
     private var adjustedPoints: (start: CGPoint, end: CGPoint)
@@ -37,10 +34,7 @@ struct EdgeView: View {
         self.startColor = edgeDescriptor.start.color ?? .black
         self.startNodeCenter = edgeDescriptor.start.center
         self.endNodeCenter = edgeDescriptor.end.center
-        self.direction = edgeDescriptor.direction
         self.adjustedPoints = (start: edgeDescriptor.start.adjustedPoint, end: edgeDescriptor.end.adjustedPoint)
-        self.hOffset = edge.placement.horizontalOffset(startNodeSize)
-        self.vOffset = edge.placement.verticalOffset
         self.intermidiatePoints = intermidiatePoints
     }
     
@@ -75,38 +69,6 @@ struct EdgeView: View {
         .animation(.default, value: point)
     }
     
-    private func secondIntermediatePoint(
-        _ nodeIntersectionOffset: CGFloat,
-        _ edgeIntersectionHOffset: CGFloat,
-        _ edgeIntersectionVOffset: CGFloat
-    ) -> CGPoint {
-        let xStart = intermidiatePoints[0].x
-        let yEnd = adjustedPoints.end.y
-        switch edge.placement {
-        case .trailing, .leading:
-            return CGPoint(x: xStart + hOffset + edgeIntersectionHOffset, y: yEnd + edgeIntersectionVOffset)
-        case .top:
-            return CGPoint(x: xStart + hOffset + edgeIntersectionHOffset, y: adjustedPoints.start.y + vOffset + edgeIntersectionVOffset)
-        case .topLeading:
-            return CGPoint(x: xStart + hOffset + edgeIntersectionHOffset, y: yEnd + edgeIntersectionVOffset)
-        case .topTrailing:
-            return CGPoint(x: xStart + nodeIntersectionOffset + edgeIntersectionHOffset, y: yEnd + edgeIntersectionVOffset)
-        case .bottomTrailing:
-            return CGPoint(x: xStart + nodeIntersectionOffset + edgeIntersectionHOffset, y: yEnd + edgeIntersectionVOffset)
-        case .bottom, .bottomLeading:
-            let x = nodeIntersectionOffset == .zero ? xStart : adjustedPoints.end.x - nodeIntersectionOffset
-            return CGPoint(x: x + edgeIntersectionHOffset, y: yEnd - nodeIntersectionOffset + edgeIntersectionVOffset)
-        }
-    }
-    
-    private var thirdIntermediatePoint: CGPoint {
-        switch edge.placement {
-        case .top:
-            return CGPoint(x: adjustedPoints.start.x + hOffset, y: adjustedPoints.end.y)
-        default: return .zero
-        }
-    }
-
     private var edgeLabel: some View {
         return Group {
             if !edge.label.isEmpty {

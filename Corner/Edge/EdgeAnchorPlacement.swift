@@ -38,24 +38,20 @@ enum EdgeAnchorPlacement: CaseIterable {
 }
 
 extension EdgeAnchorPlacement {
-    func opposite(basedOn direction: EdgeDirection) -> EdgeAnchorPlacement {
-        switch self {
-        case .trailing:
-            switch direction {
-            case .down: return .topLeading
-            case .up: return .bottomLeading
-            default: return .leading
-            }
-        case .bottomTrailing:
-            switch direction {
-            case .down: return .topLeading
-            default: return .bottomLeading
-            }
-        default:
-            switch direction {
-            case .up: return .bottomLeading
-            default: return .topLeading
-            }
+    func opposite(
+        basedOn direction: EdgeAnchorPlacementResolver.FlowDirection,
+        _ hasCrossOver: Bool
+    ) -> EdgeAnchorPlacement? {
+        switch direction {
+        case .east: return .leading
+        case .west: return .trailing
+        case .north: return hasCrossOver ? .bottomTrailing : .bottom
+        case .south: return hasCrossOver ? .topTrailing : .top
+        case .northeast: return .bottomLeading
+        case .northwest: return .bottomTrailing
+        case .southeast: return .topLeading
+        case .southwest: return .topTrailing
+        default: return nil
         }
     }
 }

@@ -19,7 +19,9 @@ class EdgePathResolver {
     func resolvePath(from start: EdgeAnchor, to end: EdgeAnchor, layerIndex: Int) -> [CGPoint] {
         var result: [CGPoint] = []
         result.append(start.adjustedPoint)
-        
+        if start.placement == .top || start.placement == .bottom {
+            return [start.adjustedPoint, end.adjustedPoint]
+        }
         // Calculate the first intermediate point
         var firstIntermediatePoint = calculateAdjustedPoint(
             initialPoint: firstPoint(start.adjustedPoint, end.adjustedPoint, start.placement),

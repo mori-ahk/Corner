@@ -11,33 +11,25 @@ struct EdgeAnchor {
     let origin: CGPoint
     let size: CGSize
     let center: CGPoint
-    let placement: EdgeAnchorPlacement
+    var placement: EdgeAnchorPlacement
     var adjustedPoint: CGPoint
     let color: Color?
 
-    init(origin: CGPoint, size: CGSize, placement: EdgeAnchorPlacement, color: Color? = nil) {
+    init(origin: CGPoint, size: CGSize, color: Color? = nil) {
         self.origin = origin
         self.size = size
         self.color = color
         center = CGPoint(x: origin.x + size.width / 2, y: origin.y + size.height / 2)
-        self.placement = placement
+        self.placement = .bottom
         self.adjustedPoint = .zero
     }
     
-    init(_ anchor: EdgeAnchor, _ placement: EdgeAnchorPlacement) {
-        self.init(origin: anchor.origin, size: anchor.size, placement: placement, color: anchor.color)
-        self.adjustedPoint = .zero
-        self.adjustedPoint = calculateAdjustedPoint(placement: placement)
-    }
-   
-    private func calculateAdjustedPoint(placement: EdgeAnchorPlacement) -> CGPoint {
+    mutating func calculateAdjustedPoint() {
         let padding: CGFloat = 16
         let halfWidth = (size.width - padding) / 2
         let halfHeight = (size.height - padding) / 2
-        
         let offset = placementOffset(placement, halfWidth: halfWidth, halfHeight: halfHeight)
-        
-        return CGPoint(x: Int(center.x + offset.x), y: Int(center.y + offset.y))
+        self.adjustedPoint = CGPoint(x: Int(center.x + offset.x), y: Int(center.y + offset.y))
     }
 
     private func placementOffset(_ placement: EdgeAnchorPlacement, halfWidth: CGFloat, halfHeight: CGFloat) -> CGPoint {
