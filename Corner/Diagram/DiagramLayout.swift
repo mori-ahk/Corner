@@ -11,11 +11,18 @@ struct DiagramLayout: Layout {
     var nodes: [[Node]]
     var diagram: Diagram
     
+    private enum LayoutConstants {
+        static let verticalNodeSpacing: CGFloat = 64
+        static let verticalEdgeSpacing: CGFloat = 32
+        static let horizontalMinSpacing: CGFloat = 80
+        static let labelWidthMultiplier: CGFloat = 6
+        static let defaultLayerOffset: CGFloat = 32
+    }
+    
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         guard !subviews.isEmpty else { return .zero }
         return proposal.replacingUnspecifiedDimensions()
     }
-
     
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         guard !subviews.isEmpty else { return }
@@ -41,7 +48,7 @@ struct DiagramLayout: Layout {
                     subviewIndex: &subviewIndex,
                     proposal: placementProposal
                 )
-                y += 64
+                y += LayoutConstants.verticalNodeSpacing
             }
             calculateXOffset(layer, &x, maxSize)
         }
@@ -58,7 +65,7 @@ struct DiagramLayout: Layout {
         let incomingEdgesCount = node.incomingEdgesCount(diagram)
         
         if incomingEdgesCount > 1 {
-            y += CGFloat((incomingEdgesCount - 1) * 32)
+            y += CGFloat(incomingEdgesCount - 1) * LayoutConstants.verticalEdgeSpacing
         }
         
         subviews[subviewIndex].place(
@@ -70,7 +77,7 @@ struct DiagramLayout: Layout {
         subviewIndex += 1
         
         if node.edges.count > 1 {
-            y += CGFloat(32 * node.edges.count)
+            y += CGFloat(node.edges.count) * LayoutConstants.verticalEdgeSpacing
         }
         
         return y
@@ -88,23 +95,15 @@ struct DiagramLayout: Layout {
         return maxSize
     }
     
-    private func spacing(subviews: Subviews) -> [CGFloat] {
-        subviews.indices.map { index in
-            guard index < subviews.count - 1 else { return 0 }
-            return subviews[index].spacing.distance(
-                to: subviews[index + 1].spacing,
-                along: .horizontal
-            )
-        }
-    }
-    
     private func calculateXOffset(_ layer: [Node], _ x: inout CGFloat, _ maxSize: CGSize) {
         let edgeLabelSizes = layer.flatMap { $0.edges.map { $0.label.count } }
         let maxLabelSize: Double = Double(edgeLabelSizes.max() ?? .zero)
         if maxLabelSize == .zero {
-            x += maxSize.width + 80
+            x += maxSize.width + LayoutConstants.horizontalMinSpacing
         } else {
-            x += maxSize.width + CGFloat(80 + (maxLabelSize * 6))
+            x += maxSize.width
+            + LayoutConstants.horizontalMinSpacing
+            + (maxLabelSize * LayoutConstants.labelWidthMultiplier)
         }
     }
     
@@ -113,6 +112,10 @@ struct DiagramLayout: Layout {
         bounds: CGRect,
         maxLayerCount: Int
     ) -> CGFloat {
-        layerIndex == 0 ? bounds.midY : bounds.midY - CGFloat(32 * maxLayerCount)
+        if layerIndex == 0 {
+            bounds.midY
+        } else {
+            bounds.midY - LayoutConstants.defaultLayerOffset * CGFloat(maxLayerCount)
+        }
     }
 }
