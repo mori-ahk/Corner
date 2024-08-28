@@ -28,8 +28,8 @@ struct EdgeDescriptor {
     }
     
     private func flowDirection() -> FlowDirection {
-        let dx = end.center.x - start.center.x
-        let dy = end.center.y - start.center.y
+        let dx = end.origin.x - start.origin.x
+        let dy = end.origin.y - start.origin.y
         
         if dx == 0 && dy == 0 {
             return .same
@@ -38,19 +38,19 @@ struct EdgeDescriptor {
         let angle = (atan2(dy, dx) * 180 / .pi) * -1
         
         switch angle {
-        case -15 ..< 15:
+        case -10 ..< 10:
             return .east
-        case 15 ..< 75:
+        case 10 ..< 70:
             return .northeast
-        case 75 ..< 105:
+        case 70 ..< 100:
             return .north
-        case 105 ..< 165:
+        case 100 ..< 170:
             return .northwest
-        case -75 ..< -15:
+        case -80 ..< -10:
             return .southeast
-        case -105 ..< -75:
+        case -100 ..< -80:
             return .south
-        case -165 ..< -105:
+        case -170 ..< -100:
             return .southwest
         default:
             return .west

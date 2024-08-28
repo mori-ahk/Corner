@@ -16,10 +16,10 @@ struct EdgeAnchor {
     let color: Color?
 
     init(origin: CGPoint, size: CGSize, color: Color? = nil) {
-        self.origin = origin
-        self.size = size
+        self.origin = CGPoint(x: Int(origin.x), y: Int(origin.y))
+        self.size = CGSize(width: Int(size.width), height: Int(size.height))
         self.color = color
-        center = CGPoint(x: origin.x + size.width / 2, y: origin.y + size.height / 2)
+        center = CGPoint(x: Int(origin.x + size.width / 2), y: Int(origin.y + size.height / 2))
         self.placement = .bottom
         self.adjustedPoint = .zero
     }

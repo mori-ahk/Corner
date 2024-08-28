@@ -120,10 +120,7 @@ class EdgePathResolver {
         }
     }
     
-    private func secondPoint(
-        _ start: CGPoint,
-        _ end: CGPoint
-    ) -> CGPoint {
+    private func secondPoint(_ start: CGPoint, _ end: CGPoint) -> CGPoint {
         return CGPoint(x: start.x, y: end.y)
     }
 
