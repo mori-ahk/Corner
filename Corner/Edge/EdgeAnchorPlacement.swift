@@ -39,7 +39,7 @@ enum EdgeAnchorPlacement: CaseIterable {
 
 extension EdgeAnchorPlacement {
     func opposite(
-        basedOn direction: EdgeAnchorPlacementResolver.FlowDirection,
+        basedOn direction: FlowDirection,
         _ hasCrossOver: Bool
     ) -> EdgeAnchorPlacement? {
         switch direction {

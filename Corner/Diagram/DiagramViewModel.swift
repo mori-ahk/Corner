@@ -64,7 +64,12 @@ class DiagramViewModel: ObservableObject {
             for node in layer {
                 for edge in node.edges {
                     if let descriptor = allEdgeDescriptors[edge.id, default: nil] {
-                        allPaths[edge.id, default: []] = resolvePath(from: descriptor.start, to: descriptor.end, layerIndex: index)
+                        allPaths[edge.id, default: []] = resolvePath(
+                            from: descriptor.start,
+                            to: descriptor.end,
+                            with: descriptor.direction,
+                            layerIndex: index
+                        )
                     }
                 }
             }
@@ -79,7 +84,11 @@ class DiagramViewModel: ObservableObject {
         diagram = Diagram()
     }
     
-    private func descriptor(for edge: Edge, with startColor: Color, _ hasCrossOver: Bool) -> EdgeDescriptor? {
+    private func descriptor(
+        for edge: Edge,
+        with startColor: Color,
+        _ hasCrossOver: Bool
+    ) -> EdgeDescriptor? {
         guard let start = allNodeBounds[edge.from],
               let end = allNodeBounds[edge.to] else { return nil }
         return EdgeDescriptor(
@@ -89,9 +98,18 @@ class DiagramViewModel: ObservableObject {
         )
     }
     
-    private func resolvePath(from start: EdgeAnchor, to end: EdgeAnchor, layerIndex: Int) -> [CGPoint] {
-        let pathPonits = edgePathResolver.resolvePath(from: start, to: end, layerIndex: layerIndex)
-        return pathPonits
+    private func resolvePath(
+        from start: EdgeAnchor,
+        to end: EdgeAnchor,
+        with direction: FlowDirection,
+        layerIndex: Int
+    ) -> [CGPoint] {
+        return edgePathResolver.resolvePath(
+            from: start,
+            to: end,
+            with: direction,
+            layerIndex: layerIndex
+        )
     }
     
     @MainActor
