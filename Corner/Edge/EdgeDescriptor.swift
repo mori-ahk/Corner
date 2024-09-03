@@ -28,8 +28,8 @@ struct EdgeDescriptor {
     }
     
     private func flowDirection() -> FlowDirection {
-        let dx = end.origin.x - start.origin.x
-        let dy = end.origin.y - start.origin.y
+        let dx = end.origin.x - start.center.x
+        let dy = end.origin.y - start.center.y
         
         if dx == 0 && dy == 0 {
             return .same
