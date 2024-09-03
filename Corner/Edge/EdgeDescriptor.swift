@@ -28,6 +28,24 @@ struct EdgeDescriptor {
     }
     
     private func flowDirection() -> FlowDirection {
+        // If two nodes are vertically aligned
+        if end.center.x == start.center.x {
+            if end.center.y > start.center.y {
+                return .south
+            } else {
+                return .north
+            }
+        }
+       
+        // If two nodes are horizontally aligned
+        if end.center.y == start.center.y {
+            if end.center.x > start.center.x {
+                return .east
+            } else {
+                return .west
+            }
+        }
+        
         let dx = end.origin.x - start.center.x
         let dy = end.origin.y - start.center.y
         

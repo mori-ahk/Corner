@@ -16,10 +16,16 @@ struct EdgeView: View {
     private let startNodeSize: CGSize
     private let endNodeSize: CGSize
     private let startColor: Color
+    private let flowDirection: FlowDirection
     private var startNodeCenter: CGPoint
     private var endNodeCenter: CGPoint
     private var adjustedPoints: (start: CGPoint, end: CGPoint)
     private var intermidiatePoints: [CGPoint]
+    
+    private enum LayoutConstants {
+        static let circleMarkerSize: CGFloat = 10
+        static let arrowMarkerSize: CGFloat = 15
+    }
     
     init(
         edge: Edge,
@@ -32,6 +38,7 @@ struct EdgeView: View {
         self.startNodeSize = edgeDescriptor.start.size
         self.endNodeSize = edgeDescriptor.end.size
         self.startColor = edgeDescriptor.start.color ?? .black
+        self.flowDirection = edgeDescriptor.direction
         self.startNodeCenter = edgeDescriptor.start.center
         self.endNodeCenter = edgeDescriptor.end.center
         self.adjustedPoints = (start: edgeDescriptor.start.adjustedPoint, end: edgeDescriptor.end.adjustedPoint)
@@ -44,29 +51,29 @@ struct EdgeView: View {
                 path.addLines(intermidiatePoints)
             }
             .stroke(
-                startColor.opacity(0.75),
+                startColor,
                 style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
             )
             .overlay(edgeLabel)
             
-            createNodeMarker(at: adjustedPoints.start, color: startColor)
-            createNodeMarker(at: adjustedPoints.end, color: startColor)
-        }
-    }
-    
-    private func createNodeMarker(at point: CGPoint, color: Color) -> some View {
-        ZStack {
-            Circle()
-                .fill(color.opacity(0.1))
-                .frame(width: 10, height: 10)
-                .position(point)
+            ShapeMarker(
+                shape: Circle(),
+                color: startColor,
+                point: adjustedPoints.start,
+                size: LayoutConstants.circleMarkerSize,
+                hasBackground: true,
+                rotationAngle: 0
+            )
 
-            Circle()
-                .fill(color)
-                .frame(width: 5, height: 5)
-                .position(point)
+            ShapeMarker(
+                shape: Arrow(),
+                color: startColor,
+                point: CGPoint(x: adjustedPoints.end.x, y: adjustedPoints.end.y - 0.25),
+                size: LayoutConstants.arrowMarkerSize,
+                hasBackground: false,
+                rotationAngle: arrowRotationAngle
+            )
         }
-        .animation(.default, value: point)
     }
     
     private var edgeLabel: some View {
@@ -80,6 +87,18 @@ struct EdgeView: View {
                     .clipShape(RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.eight))
                     .shadow(radius: UXMetrics.ShadowRadius.four)
                     .position(x: (adjustedPoints.start.x + adjustedPoints.end.x) / 2, y: adjustedPoints.end.y)
+            }
+        }
+    }
+    
+    private var arrowRotationAngle: CGFloat {
+        if flowDirection.isTowardsEast {
+           return 0
+        } else {
+            switch flowDirection {
+            case .north: return -90
+            case .south: return 90
+            default: return 180
             }
         }
     }
