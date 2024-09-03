@@ -19,20 +19,20 @@ enum EdgeAnchorPlacement: CaseIterable {
     
     func horizontalOffset(_ nodeSize: CGSize? = nil) -> CGFloat {
         switch self {
-        case .trailing: 16
-        case .leading: -16
-        case .top: -(nodeSize?.width ?? .zero / 2) - 24
-        case .topLeading: -24
-        case .bottom: -16
-        case .topTrailing, .bottomTrailing: 16
+        case .trailing: UXMetrics.Padding.sixteen
+        case .leading: -UXMetrics.Padding.sixteen
+        case .top: -(nodeSize?.width ?? .zero / 2) - UXMetrics.Padding.twentyFour
+        case .topLeading: -UXMetrics.Padding.twentyFour
+        case .bottom: -UXMetrics.Padding.sixteen
+        case .topTrailing, .bottomTrailing: UXMetrics.Padding.sixteen
         default: .zero
         }
     }
     
     var verticalOffset: CGFloat {
         switch self {
-        case .top: -16
-        case .bottom: 16
+        case .top: -UXMetrics.Padding.sixteen
+        case .bottom: UXMetrics.Padding.sixteen
         default: .zero
         }
     }

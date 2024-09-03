@@ -25,7 +25,7 @@ struct EdgeAnchor {
     }
     
     mutating func calculateAdjustedPoint() {
-        let padding: CGFloat = 16
+        let padding: CGFloat = UXMetrics.Padding.sixteen
         let halfWidth = (size.width - padding) / 2
         let halfHeight = (size.height - padding) / 2
         let offset = placementOffset(placement, halfWidth: halfWidth, halfHeight: halfHeight)
