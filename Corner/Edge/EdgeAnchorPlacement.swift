@@ -24,6 +24,7 @@ enum EdgeAnchorPlacement: CaseIterable {
         case .top: -(nodeSize?.width ?? .zero / 2) - 24
         case .topLeading: -24
         case .bottom: -16
+        case .topTrailing, .bottomTrailing: 16
         default: .zero
         }
     }
