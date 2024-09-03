@@ -95,7 +95,7 @@ struct EdgeView: View {
     }
     
     /* 
-    Arrow direction is calculated using on the last two points
+    Arrow direction is calculated using the last two points
     used for drawing the edge path. This is because some edges don't necessarily follow
     flow direction of edge descriptor.
     */

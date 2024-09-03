@@ -69,19 +69,19 @@ class EdgePathResolver {
         
         // Adjust for node intersection
         while aNodeIntersect(with: point) {
-            point.x += direction.isTowardsEast ? 16 : -16
+            point.x += direction.isTowardsEast ? UXMetrics.Padding.sixteen : -UXMetrics.Padding.sixteen
         }
         
         // Adjust for edge intersection
         var edgeIntersection = anEdgeIntersect(with: point, towards: direction, at: layerIndex)
         
         while edgeIntersection.hasSameX {
-            point.x += direction.isTowardsEast ? 8 : -8
+            point.x += direction.isTowardsEast ? UXMetrics.Padding.eight : -UXMetrics.Padding.eight
             edgeIntersection = anEdgeIntersect(with: point, towards: direction, at: layerIndex)
         }
         
         while edgeIntersection.hasSameY {
-            point.y += direction.isTowardsNorth ? -16 : 16
+            point.y += direction.isTowardsNorth ? -UXMetrics.Padding.sixteen : UXMetrics.Padding.sixteen
             edgeIntersection = anEdgeIntersect(with: point, towards: direction, at: layerIndex)
         }
         
