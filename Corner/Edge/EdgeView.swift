@@ -16,7 +16,6 @@ struct EdgeView: View {
     private let startNodeSize: CGSize
     private let endNodeSize: CGSize
     private let startColor: Color
-    private let flowDirection: FlowDirection
     private var startNodeCenter: CGPoint
     private var endNodeCenter: CGPoint
     private var adjustedPoints: (start: CGPoint, end: CGPoint)
@@ -38,7 +37,6 @@ struct EdgeView: View {
         self.startNodeSize = edgeDescriptor.start.size
         self.endNodeSize = edgeDescriptor.end.size
         self.startColor = edgeDescriptor.start.color ?? .black
-        self.flowDirection = edgeDescriptor.direction
         self.startNodeCenter = edgeDescriptor.start.center
         self.endNodeCenter = edgeDescriptor.end.center
         self.adjustedPoints = (start: edgeDescriptor.start.adjustedPoint, end: edgeDescriptor.end.adjustedPoint)
@@ -92,15 +90,21 @@ struct EdgeView: View {
     }
     
     private var arrowRotationAngle: CGFloat {
-        if flowDirection.isTowardsEast {
-           return 0
-        } else {
-            switch flowDirection {
-            case .north: return -90
-            case .south: return 90
-            default: return 180
-            }
-        }
+        guard let arrowDirection else { return 0 }
+        return arrowDirection.rotationAngle
+    }
+    
+    /* 
+    Arrow direction is calculated using on the last two points
+    used for drawing the edge path. This is because some edges don't necessarily follow
+    flow direction of edge descriptor.
+    */
+    private var arrowDirection: ArrowDirection? {
+        var lastTwoPoints = intermidiatePoints.suffix(2)
+        guard !lastTwoPoints.isEmpty, lastTwoPoints.count == 2 else { return nil }
+        let firstPoint = lastTwoPoints.removeFirst()
+        let secondPoint = lastTwoPoints.removeFirst()
+        return ArrowDirection.from(firstPoint, to: secondPoint)
     }
 }
 
