@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct DiagramLayout: Layout {
-    var nodes: [[Node]]
     var diagram: Diagram
     
     private enum LayoutConstants {
@@ -26,6 +25,7 @@ struct DiagramLayout: Layout {
     
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         guard !subviews.isEmpty else { return }
+        let nodes = diagram.layeredNodes
         let maxSize = maxSize(subviews: subviews)
         let placementProposal = ProposedViewSize(width: maxSize.width, height: maxSize.height)
         
@@ -40,7 +40,7 @@ struct DiagramLayout: Layout {
                 bounds: bounds,
                 maxLayerCount: maxLayerCount
             )
-            for (nodeIndex, node) in layer.enumerated() {
+            for node in layer {
                 y = placeNode(
                     node: node,
                     at: CGPoint(x: x, y: y),
@@ -62,7 +62,7 @@ struct DiagramLayout: Layout {
         proposal: ProposedViewSize
     ) -> CGFloat {
         var y = point.y
-        let incomingEdgesCount = node.incomingEdgesCount(diagram)
+        let incomingEdgesCount = diagram.incomingEdgesCount[node.id, default: .zero]
         
         if incomingEdgesCount > 1 {
             y += CGFloat(incomingEdgesCount - 1) * LayoutConstants.verticalEdgeSpacing

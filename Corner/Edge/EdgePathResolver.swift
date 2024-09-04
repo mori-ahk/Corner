@@ -29,12 +29,12 @@ class EdgePathResolver {
         }
         // Calculate the first intermediate point
         let firstIntermediatePoint = calculateAdjustedPoint(
-            initialPoint: firstPoint(
+            from: firstPoint(
                 start.adjustedPoint,
                 end.adjustedPoint,
                 start.placement
             ),
-            with: direction,
+            in: direction,
             layerIndex: layerIndex
         )
         
@@ -44,8 +44,8 @@ class EdgePathResolver {
         if firstIntermediatePoint.y != end.adjustedPoint.y {
             var secondIntermediatePoint = secondPoint(firstIntermediatePoint, end.adjustedPoint)
             secondIntermediatePoint = calculateAdjustedPoint(
-                initialPoint: secondIntermediatePoint,
-                with: direction,
+                from: secondIntermediatePoint,
+                in: direction,
                 layerIndex: layerIndex
             )
             result.append(secondIntermediatePoint)
@@ -60,40 +60,41 @@ class EdgePathResolver {
         return result
     }
 
+    func clearAll() {
+        allNodeBounds.removeAll(keepingCapacity: true)
+        allIntermidiatePoints.removeAll(keepingCapacity: true)
+    }
+    
+    func setNodeBounds(_ nodeBounds: [Node.ID : CGRect]) {
+        self.allNodeBounds = nodeBounds
+    }
+    
     private func calculateAdjustedPoint(
-        initialPoint: CGPoint,
-        with direction: FlowDirection,
+        from initialPoint: CGPoint,
+        in direction: FlowDirection,
         layerIndex: Int
     ) -> CGPoint {
         var point = initialPoint
         
         // Adjust for node intersection
-        while aNodeIntersect(with: point) {
+        while doesNodeIntersect(with: point) {
             point.x += direction.isTowardsEast ? UXMetrics.Padding.sixteen : -UXMetrics.Padding.sixteen
         }
         
         // Adjust for edge intersection
-        var edgeIntersection = anEdgeIntersect(with: point, towards: direction, at: layerIndex)
+        var edgeIntersection = doesEdgeIntersect(with: point, in: direction, at: layerIndex)
         
         while edgeIntersection.hasSameX {
             point.x += direction.isTowardsEast ? UXMetrics.Padding.eight : -UXMetrics.Padding.eight
-            edgeIntersection = anEdgeIntersect(with: point, towards: direction, at: layerIndex)
+            edgeIntersection = doesEdgeIntersect(with: point, in: direction, at: layerIndex)
         }
         
         while edgeIntersection.hasSameY {
             point.y += direction.isTowardsNorth ? -UXMetrics.Padding.sixteen : UXMetrics.Padding.sixteen
-            edgeIntersection = anEdgeIntersect(with: point, towards: direction, at: layerIndex)
+            edgeIntersection = doesEdgeIntersect(with: point, in: direction, at: layerIndex)
         }
         
         return point
-    }
-    
-    private func aNodeIntersect(with point: CGPoint) -> Bool {
-        for (_, value) in allNodeBounds {
-            if value.contains(point) { return true }
-            else { continue }
-        }
-        return false
     }
     
     private func firstPoint(
@@ -124,19 +125,32 @@ class EdgePathResolver {
         return CGPoint(x: start.x, y: end.y)
     }
 
-    private func anEdgeIntersect(
+    private func doesNodeIntersect(with point: CGPoint) -> Bool {
+        for (_, value) in allNodeBounds {
+            if value.contains(point) { return true }
+            else { continue }
+        }
+        return false
+    }
+    
+    private func doesEdgeIntersect(
         with point: CGPoint,
-        towards direction: FlowDirection,
+        in direction: FlowDirection,
         at layerIndex: Int
     ) -> (hasSameX: Bool, hasSameY: Bool) {
-        let layerPoints = allIntermidiatePoints[layerIndex, default: []]
-        let hasSameX = layerPoints.contains { layerPoint in
-            if layerPoint.x == point.x {
-                if direction.isTowardsNorth && layerPoint.y > point.y { return false }
-                else if !direction.isTowardsNorth && layerPoint.y < point.y { return false }
-                else { return true }
-            } else { return false }
+        guard let layerPoints = allIntermidiatePoints[layerIndex] else {
+            return (false, false)
         }
+        
+        let hasSameX = layerPoints.contains { layerPoint in
+            guard layerPoint.x == point.x else { return false }
+            if direction.isTowardsNorth {
+                return layerPoint.y <= point.y
+            } else {
+                return layerPoint.y >= point.y
+            }
+        }
+        
         let hasSameY = layerPoints.contains { $0.y == point.y }
         return (hasSameX, hasSameY)
     }
@@ -145,14 +159,5 @@ class EdgePathResolver {
         if !allIntermidiatePoints[layerIndex, default: []].contains(point) {
             allIntermidiatePoints[layerIndex, default: []].append(point)
         }
-    }
-    
-    func clearAll() {
-        allNodeBounds.removeAll(keepingCapacity: true)
-        allIntermidiatePoints.removeAll(keepingCapacity: true)
-    }
-    
-    func setNodeBounds(_ nodeBounds: [Node.ID : CGRect]) {
-        self.allNodeBounds = nodeBounds
     }
 }

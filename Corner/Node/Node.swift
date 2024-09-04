@@ -48,17 +48,5 @@ struct Node: Identifiable, Equatable {
         default: .teal
         }
     }
-    
-    func incomingEdgesCount(_ diagram: Diagram) -> Int {
-        var count: Int = .zero
-        for node in diagram.nodes {
-            for edge in node.edges {
-                if edge.to == self.id {
-                    count += 1
-                }
-            }
-        }
-        return count
-    }
 }
 

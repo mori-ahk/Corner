@@ -59,7 +59,7 @@ struct ContentView: View {
         .padding()
         .background(.background)
         .clipShape(RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.twelve))
-        .shadow(color: .gray.opacity(0.15), radius: UXMetrics.ShadowRadius.twelve)
+        .shadow(color: .gray.opacity(0.33), radius: UXMetrics.ShadowRadius.twelve)
     }
     
     private var actionButtons: some View {
@@ -115,7 +115,7 @@ struct ContentView: View {
     
     @ViewBuilder
     private var diagramLayout: some View {
-        DiagramLayout(nodes: vm.diagram.layeredNodes, diagram: vm.diagram) {
+        DiagramLayout(diagram: vm.diagram) {
             ForEach(vm.diagram.flattenNodes) { node in
                 NodeView(node: node)
                     .anchorPreference(key: Key.self, value: .bounds) { [node.id: $0] }

@@ -11,13 +11,15 @@ struct Diagram: Equatable {
     let nodes: [Node]
     var layeredNodes: [[Node]]
     var flattenNodes: [Node]
-    
+    var incomingEdgesCount: [Node.ID : Int]
     init(nodes: [Node] = []) {
         self.nodes = nodes
         self.layeredNodes = []
         self.flattenNodes = []
+        self.incomingEdgesCount = [:]
         self.layeredNodes = layered()
         self.flattenNodes = layered().flatMap { $0 }
+        self.incomingEdgesCount = buildIncomingEdgesCount()
     }
 }
 
@@ -50,5 +52,16 @@ extension Diagram {
         }
         
         return layers
+    }
+    
+    private func buildIncomingEdgesCount() -> [Node.ID : Int] {
+        var result: [Node.ID : Int] = [:]
+        for node in nodes {
+            for edge in node.edges {
+                result[edge.to, default: .zero] += 1
+            }
+        }
+        
+        return result
     }
 }
