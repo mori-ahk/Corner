@@ -59,7 +59,7 @@ struct ContentView: View {
         .padding()
         .background(.background)
         .clipShape(RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.twelve))
-        .shadow(color: .gray.opacity(0.15), radius: UXMetrics.ShadowRadius.twelve)
+        .shadow(color: .gray.opacity(0.33), radius: UXMetrics.ShadowRadius.twelve)
     }
     
     private var actionButtons: some View {
