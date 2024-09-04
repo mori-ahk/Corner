@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct DiagramLayout: Layout {
-    var nodes: [[Node]]
     var diagram: Diagram
     
     private enum LayoutConstants {
@@ -26,6 +25,7 @@ struct DiagramLayout: Layout {
     
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         guard !subviews.isEmpty else { return }
+        let nodes = diagram.layeredNodes
         let maxSize = maxSize(subviews: subviews)
         let placementProposal = ProposedViewSize(width: maxSize.width, height: maxSize.height)
         

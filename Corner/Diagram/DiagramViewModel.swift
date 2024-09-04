@@ -13,9 +13,9 @@ class DiagramViewModel: ObservableObject {
     
     private let parser = CornerParser()
     private var edgePathResolver = EdgePathResolver()
-    @Published var allPaths: [UUID : [CGPoint]] = [:]
-    @Published var allEdgeDescriptors: [UUID : EdgeDescriptor?] = [:]
-    @Published var allNodeBounds: [Node.ID: CGRect] = [:]
+    var allPaths: [UUID : [CGPoint]] = [:]
+    var allEdgeDescriptors: [UUID : EdgeDescriptor?] = [:]
+    var allNodeBounds: [Node.ID: CGRect] = [:]
     @Published var diagram: Diagram = Diagram()
     @Published var state: DiagramState = .idle
     
@@ -36,18 +36,30 @@ class DiagramViewModel: ObservableObject {
             throw error
         }
     }
-
-    @MainActor 
+    
+    @MainActor
     func bounds(from proxy: GeometryProxy, given nodesBounds: [Node.ID: Anchor<CGRect>]) {
         guard !diagram.nodes.isEmpty else { return }
-        
         state = .loading
+        
         for (key, value) in nodesBounds {
             allNodeBounds[key, default: .zero] = proxy[value]
         }
         
         edgePathResolver.setNodeBounds(allNodeBounds)
+        buildEdgeDescriptors()
+        buildEdgePaths()
         
+        state = .loaded
+    }
+   
+    @MainActor 
+    func clear() {
+        clearAll()
+        diagram = Diagram()
+    }
+    
+    private func buildEdgeDescriptors() {
         for (index, layer) in diagram.layeredNodes.enumerated() {
             for (nodeIndex, node) in layer.enumerated() {
                 for edge in node.edges {
@@ -59,7 +71,9 @@ class DiagramViewModel: ObservableObject {
                 }
             }
         }
-        
+    }
+    
+    private func buildEdgePaths() {
         for (index, layer) in diagram.layeredNodes.enumerated() {
             for node in layer {
                 for edge in node.edges {
@@ -74,14 +88,6 @@ class DiagramViewModel: ObservableObject {
                 }
             }
         }
-        
-        state = .loaded
-    }
-   
-    @MainActor 
-    func clear() {
-        clearAll()
-        diagram = Diagram()
     }
     
     private func descriptor(
@@ -112,19 +118,11 @@ class DiagramViewModel: ObservableObject {
         )
     }
     
-    @MainActor
     private func clearAll() {
         allPaths.removeAll(keepingCapacity: true)
         allEdgeDescriptors.removeAll(keepingCapacity: true)
         allNodeBounds.removeAll(keepingCapacity: true)
         edgePathResolver.clearAll()
-    }
-}
-
-extension CGPoint: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(Int(x))
-        hasher.combine(Int(y))
     }
 }
 

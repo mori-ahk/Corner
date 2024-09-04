@@ -115,7 +115,7 @@ struct ContentView: View {
     
     @ViewBuilder
     private var diagramLayout: some View {
-        DiagramLayout(nodes: vm.diagram.layeredNodes, diagram: vm.diagram) {
+        DiagramLayout(diagram: vm.diagram) {
             ForEach(vm.diagram.flattenNodes) { node in
                 NodeView(node: node)
                     .anchorPreference(key: Key.self, value: .bounds) { [node.id: $0] }
