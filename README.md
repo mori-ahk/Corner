@@ -80,7 +80,9 @@ purple
 pink
 ```
 
-> **Note if color is not specified, Corner will assign a random color to the node.** 
+> [!NOTE]  
+> If color is not specified, Corner will assign a random color to the node.
+
 
 ##### Example
 
