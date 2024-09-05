@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct NodeView: View {
+    @Environment(\.colorScheme) private var colorScheme
     let node: Node
     
     var body: some View {
@@ -19,9 +20,19 @@ struct NodeView: View {
             .foregroundColor(node.color)
             .background {
                 RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.eight)
-                    .fill(.background)
-                    .shadow(color: node.color.opacity(0.33), radius: UXMetrics.ShadowRadius.four)
+                    .fill(
+                        LinearGradient(
+                            colors: [topGradientColor, node.color.opacity(0.2)],
+                            startPoint: .top,
+                            endPoint: UnitPoint(x: 0.5, y: 4)
+                        )
+                    )
+                    .shadow(color: node.color.opacity(0.2), radius: UXMetrics.ShadowRadius.four)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+    }
+    
+    private var topGradientColor: Color {
+        colorScheme == .dark ? .black : .white
     }
 }
