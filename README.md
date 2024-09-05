@@ -186,7 +186,7 @@ node EndNode {
 
 ##### Generated Example Diagram
 
-<img src="Screenshots/Example.png" width="500"/>
+![example screenshot](./Screenshots/Example.png)
 
 ##### Known Issues
 
