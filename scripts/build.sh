@@ -16,9 +16,9 @@ xcodebuild \
   -exportPath artifacts/ \
   -allowProvisioningUpdates
 
-create-dmg artifacts/Corner.app artifacts/
+create-dmg artifacts/Corner.app artifacts/ --overwrite --dmg-title="Corner" 
 
-mv artifacts/Corner*.dmg artifacts/Corner.dmg
+mv "$(find artifacts -name 'Corner*.dmg' | head -n 1)" artifacts/Corner.dmg 
 
 xcrun notarytool submit \
   --team-id "$TEAM_ID" \
