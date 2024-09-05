@@ -13,8 +13,8 @@ class DiagramViewModel: ObservableObject {
     
     private let parser = CornerParser()
     private var edgePathResolver = EdgePathResolver()
-    var allPaths: [UUID : [CGPoint]] = [:]
-    var allEdgeDescriptors: [UUID : EdgeDescriptor?] = [:]
+    var allPaths: [Edge.ID : [CGPoint]] = [:]
+    var allEdgeDescriptors: [Edge.ID : EdgeDescriptor?] = [:]
     var allNodeBounds: [Node.ID: CGRect] = [:]
     @Published var diagram: Diagram = Diagram()
     @Published var state: DiagramState = .idle
