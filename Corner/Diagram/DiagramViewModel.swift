@@ -22,18 +22,24 @@ class DiagramViewModel: ObservableObject {
     @MainActor
     func diagram(for input: String) throws {
         state = .loading
-        do {
-            let ast = try parser.parse(input)
-            switch ast {
-            case .diagram(let children):
-                let parsedNodes = children.filter { $0.isNode }
-                let nodes: [Node] = parsedNodes.compactMap { Node(from: $0) }
-                self.diagram = Diagram(nodes: nodes)
-            default: break
+        Task {
+            do {
+                // Temporary delay to address an issue where edges are not visible
+                // after rendering multiple diagrams in quick succession.
+                // The 2-second pause ensures proper edge rendering.
+                try await Task.sleep(nanoseconds: 2_000_000_000)
+                let ast = try parser.parse(input)
+                switch ast {
+                case .diagram(let children):
+                    let parsedNodes = children.filter { $0.isNode }
+                    let nodes: [Node] = parsedNodes.compactMap { Node(from: $0) }
+                    self.diagram = Diagram(nodes: nodes)
+                default: break
+                }
+                state = .loaded
+            } catch {
+                throw error
             }
-            state = .loaded
-        } catch {
-            throw error
         }
     }
     

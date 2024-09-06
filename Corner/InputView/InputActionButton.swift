@@ -10,6 +10,7 @@ import SwiftUI
 struct ActionButton: View {
     let title: String
     let color: Color
+    let disabled: Bool
     let action: () -> Void
     
     var body: some View {
@@ -21,11 +22,13 @@ struct ActionButton: View {
                 .padding()
                 .foregroundStyle(.white)
                 .background {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(color)
+                    RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.twelve)
+                        .fill(disabled ? color.opacity(0.1) : color)
                         .shadow(radius: 4)
                 }
         }
         .buttonStyle(.borderless)
+        .disabled(disabled)
+        .animation(.default, value: disabled)
     }
 }
