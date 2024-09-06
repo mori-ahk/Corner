@@ -64,22 +64,23 @@ struct ContentView: View {
     
     private var actionButtons: some View {
         HStack {
-            ActionButton(title: "Generate", color: .blue) {
-                if !vm.diagram.nodes.isEmpty {
-                    guard previousInput != input else { return }
-                    self.previousInput = input
-                }
+            ActionButton(
+                title: "Generate",
+                color: .blue,
+                disabled: vm.state == .loading
+            ) {
                 vm.clear()
-                    
-                Task {
-                    do {
-                        try await Task.sleep(nanoseconds: 2_000_000_000)
-                        try vm.diagram(for: input)
-                    } catch { print(error) }
-                }
+                
+                do {
+                    try vm.diagram(for: input)
+                } catch { print(error) }
             }
-            
-            ActionButton(title: "Clear", color: .red) {
+
+            ActionButton(
+                title: "Clear",
+                color: .red,
+                disabled: vm.state == .loading
+            ) {
                 vm.clear()
             }
         }
