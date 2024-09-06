@@ -188,7 +188,12 @@ node EndNode {
 
 ##### Generated Example Diagram
 
-![example screenshot](./Screenshots/Example.png)
+![example screenshot](./Screenshots/Example_1.png)
+
+#### Other Examples
+
+![example 2](./Screenshots/Example_2.png)
+![example 3](./Screenshots/Example_3.png)
 
 ##### Known Issues
 
