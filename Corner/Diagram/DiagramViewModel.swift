@@ -37,8 +37,8 @@ class DiagramViewModel: ObservableObject {
                 default: break
                 }
                 state = .loaded
-            } catch {
-                throw error
+            } catch let error as ParseError {
+                state = .failed(error)
             }
         }
     }
@@ -130,10 +130,4 @@ class DiagramViewModel: ObservableObject {
         allNodeBounds.removeAll(keepingCapacity: true)
         edgePathResolver.clearAll()
     }
-}
-
-enum DiagramState {
-    case idle
-    case loading
-    case loaded
 }
