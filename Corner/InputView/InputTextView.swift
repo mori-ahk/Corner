@@ -38,10 +38,12 @@ struct InputTextView: NSViewRepresentable {
         let scrollView = NSScrollView()
         scrollView.hasVerticalScroller = true
         scrollView.hasHorizontalScroller = false
+        scrollView.verticalScroller?.controlSize = .mini
         scrollView.borderType = .noBorder
         scrollView.autoresizingMask = [.width, .height]
+        scrollView.backgroundColor = NSColor.gray.withAlphaComponent(0.1)
         scrollView.wantsLayer = true
-        scrollView.layer?.cornerRadius = 12
+        scrollView.layer?.cornerRadius = UXMetrics.CornerRadius.twelve
         scrollView.layer?.masksToBounds = true
 
         let textView = NSTextView()
@@ -55,10 +57,10 @@ struct InputTextView: NSViewRepresentable {
         textView.textContainerInset = NSSize(width: 12, height: 12)
         textView.textContainer?.widthTracksTextView = true
         textView.wantsLayer = true
-        textView.layer?.cornerRadius = 12
+        textView.layer?.cornerRadius = UXMetrics.CornerRadius.twelve
         textView.layer?.masksToBounds = true
         textView.font = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
-        textView.backgroundColor = NSColor.gray.withAlphaComponent(0.1)
+        textView.backgroundColor = NSColor.clear
         textView.textColor = textColor
         textView.string = text
         

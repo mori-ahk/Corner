@@ -22,17 +22,22 @@ struct ContentView: View {
                 inputSection
                     .transition(.move(edge: .leading).combined(with: .blurReplace))
             }
-            switch vm.state {
-            case .idle: EmptyView()
-            case .loading: 
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            case .loaded:
-                if !vm.diagram.nodes.isEmpty {
-                    diagramSection
-                        .transition(.blurReplace)
+            ZStack {
+                switch vm.state {
+                case .idle: EmptyView()
+                case .loading:
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                case .loaded:
+                    if !vm.diagram.nodes.isEmpty {
+                        diagramSection
+                            .transition(.blurReplace)
+                    }
+                case .failed:
+                    ErrorView()
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .padding(UXMetrics.Padding.twentyFour)
@@ -40,6 +45,7 @@ struct ContentView: View {
             self.nodesBounds = bounds
         }
         .animation(.default, value: vm.diagram)
+        .animation(.default, value: vm.state)
         .animation(.default, value: shouldHideInputView)
     }
     
@@ -48,10 +54,25 @@ struct ContentView: View {
             Text("Start diagram here:")
                 .font(.headline)
                 .fontWeight(.semibold)
-            InputTextView(
-                text: $input,
-                textColor: .labelColor
-            )
+            VStack {
+                InputTextView(
+                    text: $input,
+                    textColor: .labelColor
+                )
+                .frame(maxHeight: .infinity, alignment: .top)
+
+                if case let .failed(error, semanticErrors) = vm.state {
+                    if let error {
+                        ErrorListItemView(errorDescription: error.description)
+                    } else {
+                        if !semanticErrors.isEmpty {
+                           SemanticErrorListView(errors: semanticErrors)
+                        }
+                    }
+                }
+            }
+            .frame(maxHeight: .infinity, alignment: .bottom)
+            
             Divider()
             actionButtons
         }
@@ -97,7 +118,7 @@ struct ContentView: View {
                 vm.bounds(from: proxy, given: nodesBounds)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(UXMetrics.Padding.twentyFour)
         .overlay(alignment: .topLeading) {
             Button {
