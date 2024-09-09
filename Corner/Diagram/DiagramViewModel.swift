@@ -28,17 +28,23 @@ class DiagramViewModel: ObservableObject {
                 // after rendering multiple diagrams in quick succession.
                 // The 2-second pause ensures proper edge rendering.
                 try await Task.sleep(nanoseconds: 2_000_000_000)
-                let ast = try parser.parse(input)
-                switch ast {
-                case .diagram(let children):
-                    let parsedNodes = children.filter { $0.isNode }
-                    let nodes: [Node] = parsedNodes.compactMap { Node(from: $0) }
-                    self.diagram = Diagram(nodes: nodes)
-                default: break
+                if let root = try parser.parse(input) {
+                    let semanticErrors = parser.analyze(root)
+                    if semanticErrors.isEmpty {
+                        switch root {
+                        case .diagram(let children):
+                            let parsedNodes = children.filter { $0.isNode }
+                            let nodes: [Node] = parsedNodes.compactMap { Node(from: $0) }
+                            self.diagram = Diagram(nodes: nodes)
+                        default: break
+                        }
+                        state = .loaded
+                    } else {
+                        state = .failed(nil, semanticErrors)
+                    }
                 }
-                state = .loaded
             } catch let error as ParseError {
-                state = .failed(error)
+                state = .failed(error, [])
             }
         }
     }

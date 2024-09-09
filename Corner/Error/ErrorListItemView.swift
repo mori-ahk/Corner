@@ -8,8 +8,8 @@
 import SwiftUI
 import CornerParser
 
-struct ParserErrorView: View {
-    let error: ParseError
+struct ErrorListItemView: View {
+    let errorDescription: String
     
     var body: some View {
         HStack(alignment: .top) {
@@ -18,7 +18,7 @@ struct ParserErrorView: View {
                 .frame(width: 16, height: 16)
                 .foregroundStyle(.red)
             
-            Text(error.description)
+            Text(errorDescription)
                 .fontWeight(.semibold)
                 .foregroundStyle(.red)
                 .frame(maxWidth: .infinity, alignment: .topLeading)

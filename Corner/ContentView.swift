@@ -61,8 +61,14 @@ struct ContentView: View {
                 )
                 .frame(maxHeight: .infinity, alignment: .top)
 
-                if case let .failed(error) = vm.state {
-                    ParserErrorView(error: error)
+                if case let .failed(error, semanticErrors) = vm.state {
+                    if let error {
+                        ErrorListItemView(errorDescription: error.description)
+                    } else {
+                        if !semanticErrors.isEmpty {
+                           SemanticErrorListView(errors: semanticErrors)
+                        }
+                    }
                 }
             }
             .frame(maxHeight: .infinity, alignment: .bottom)

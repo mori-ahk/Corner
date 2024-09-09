@@ -36,8 +36,9 @@
 		829DFA6A2C69532B005E4671 /* UXMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829DFA692C69532B005E4671 /* UXMetrics.swift */; };
 		829DFA6C2C6A804B005E4671 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829DFA6B2C6A804B005E4671 /* Color+Extensions.swift */; };
 		82B85B862C8F380400189F98 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B85B852C8F380400189F98 /* ErrorView.swift */; };
-		82B85B892C8F3BF500189F98 /* ParserErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B85B882C8F3BF500189F98 /* ParserErrorView.swift */; };
+		82B85B892C8F3BF500189F98 /* ErrorListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B85B882C8F3BF500189F98 /* ErrorListItemView.swift */; };
 		82B85B8B2C8F3E3200189F98 /* DiagramState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B85B8A2C8F3E3200189F98 /* DiagramState.swift */; };
+		82B85B902C8F6B3700189F98 /* SemanticErrorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B85B8F2C8F6B3700189F98 /* SemanticErrorListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,8 +91,9 @@
 		829DFA692C69532B005E4671 /* UXMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UXMetrics.swift; sourceTree = "<group>"; };
 		829DFA6B2C6A804B005E4671 /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
 		82B85B852C8F380400189F98 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
-		82B85B882C8F3BF500189F98 /* ParserErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParserErrorView.swift; sourceTree = "<group>"; };
+		82B85B882C8F3BF500189F98 /* ErrorListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorListItemView.swift; sourceTree = "<group>"; };
 		82B85B8A2C8F3E3200189F98 /* DiagramState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramState.swift; sourceTree = "<group>"; };
+		82B85B8F2C8F6B3700189F98 /* SemanticErrorListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticErrorListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -243,7 +245,8 @@
 			isa = PBXGroup;
 			children = (
 				82B85B852C8F380400189F98 /* ErrorView.swift */,
-				82B85B882C8F3BF500189F98 /* ParserErrorView.swift */,
+				82B85B882C8F3BF500189F98 /* ErrorListItemView.swift */,
+				82B85B8F2C8F6B3700189F98 /* SemanticErrorListView.swift */,
 			);
 			path = Error;
 			sourceTree = "<group>";
@@ -386,9 +389,10 @@
 			files = (
 				829DFA662C6933D2005E4671 /* InputActionButton.swift in Sources */,
 				8273F6762C62673B00B589A7 /* DiagramViewModel.swift in Sources */,
-				82B85B892C8F3BF500189F98 /* ParserErrorView.swift in Sources */,
+				82B85B892C8F3BF500189F98 /* ErrorListItemView.swift in Sources */,
 				82B85B862C8F380400189F98 /* ErrorView.swift in Sources */,
 				82721F4F2C875E17005AC946 /* ShapeMarker.swift in Sources */,
+				82B85B902C8F6B3700189F98 /* SemanticErrorListView.swift in Sources */,
 				8270430E2C74EC1300E2BCE9 /* EdgeDescriptor.swift in Sources */,
 				829DFA6A2C69532B005E4671 /* UXMetrics.swift in Sources */,
 				8273F6662C62621D00B589A7 /* Node.swift in Sources */,
