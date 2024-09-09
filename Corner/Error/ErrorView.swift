@@ -10,7 +10,7 @@ import SwiftUI
 struct ErrorView: View {
     var body: some View {
         VStack {
-            Image(systemName: "x.circle.fill")
+            Image(systemName: "exclamationmark.triangle.fill")
                 .resizable()
                 .frame(width: 64, height: 64)
                 .foregroundStyle(.red)

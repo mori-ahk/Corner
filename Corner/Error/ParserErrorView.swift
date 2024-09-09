@@ -12,13 +12,24 @@ struct ParserErrorView: View {
     let error: ParseError
     
     var body: some View {
-        Text(error.description)
-            .fontWeight(.semibold)
-            .foregroundStyle(.white)
-            .padding()
-            .background(.red.opacity(0.5))
-            .clipShape(RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.twelve))
-            .shadow(radius: UXMetrics.ShadowRadius.four)
-            .transition(.move(edge: .bottom).combined(with: .opacity))
+        HStack(alignment: .top) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .resizable()
+                .frame(width: 16, height: 16)
+                .foregroundStyle(.red)
+            
+            Text(error.description)
+                .fontWeight(.semibold)
+                .foregroundStyle(.red)
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background {
+            RoundedRectangle(cornerRadius: UXMetrics.CornerRadius.twelve)
+                .fill(.red.opacity(0.1))
+                .shadow(radius: UXMetrics.ShadowRadius.four)
+        }
+        .transition(.move(edge: .bottom).combined(with: .opacity))
     }
 }
