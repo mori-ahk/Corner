@@ -38,6 +38,7 @@ struct InputTextView: NSViewRepresentable {
         let scrollView = NSScrollView()
         scrollView.hasVerticalScroller = true
         scrollView.hasHorizontalScroller = false
+        scrollView.verticalScroller?.controlSize = .mini
         scrollView.borderType = .noBorder
         scrollView.autoresizingMask = [.width, .height]
         scrollView.wantsLayer = true
