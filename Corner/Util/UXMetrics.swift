@@ -35,4 +35,10 @@ struct UXMetrics {
         static let ten: CGFloat = 5 * two
         static let twelve: CGFloat = 6 * two
     }
+    
+    /// 0.975
+    static let buttonScaleWhenPressed: CGFloat = 0.975
+    
+    /// 1.0
+    static let buttonScaleWhenUnpressed: CGFloat = 1.0
 }
