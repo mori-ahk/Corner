@@ -18,6 +18,7 @@ class DiagramViewModel: ObservableObject {
     var allNodeBounds: [Node.ID: CGRect] = [:]
     @Published var diagram: Diagram = Diagram()
     @Published var state: DiagramState = .idle
+    @Published var semanticAnalysisResult: SemanticAnalysisResult?
     
     @MainActor
     func diagram(for input: String) throws {
@@ -29,8 +30,9 @@ class DiagramViewModel: ObservableObject {
                 // The 2-second pause ensures proper edge rendering.
                 try await Task.sleep(nanoseconds: 2_000_000_000)
                 if let root = try parser.parse(input) {
-                    let semanticErrors = parser.analyze(root)
-                    if semanticErrors.isEmpty {
+                    let semanticResult = parser.analyze(root)
+                    self.semanticAnalysisResult = semanticResult
+                    if semanticResult.errors.isEmpty {
                         switch root {
                         case .diagram(let children):
                             let parsedNodes = children.filter { $0.isNode }
@@ -40,11 +42,11 @@ class DiagramViewModel: ObservableObject {
                         }
                         state = .loaded
                     } else {
-                        state = .failed(nil, semanticErrors)
+                        state = .failed(nil)
                     }
                 }
             } catch let error as ParseError {
-                state = .failed(error, [])
+                state = .failed(error)
             }
         }
     }

@@ -12,5 +12,5 @@ enum DiagramState: Equatable {
     case idle
     case loading
     case loaded
-    case failed(ParseError?, [SemanticError])
+    case failed(ParseError?)
 }
