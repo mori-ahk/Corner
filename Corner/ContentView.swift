@@ -89,7 +89,8 @@ struct ContentView: View {
             ActionButton(
                 title: "Generate",
                 color: .blue,
-                disabled: vm.state == .loading
+                disabled: vm.state == .loading,
+                iconName: "play"
             ) {
                 vm.clear()
                 
@@ -101,7 +102,8 @@ struct ContentView: View {
             ActionButton(
                 title: "Clear",
                 color: .red,
-                disabled: vm.state == .loading
+                disabled: vm.state == .loading,
+                iconName: "trash"
             ) {
                 vm.clear()
             }

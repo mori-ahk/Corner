@@ -39,6 +39,9 @@
 		82B85B892C8F3BF500189F98 /* SemanticResultListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B85B882C8F3BF500189F98 /* SemanticResultListItemView.swift */; };
 		82B85B8B2C8F3E3200189F98 /* DiagramState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B85B8A2C8F3E3200189F98 /* DiagramState.swift */; };
 		82B85B902C8F6B3700189F98 /* SemanticResultListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B85B8F2C8F6B3700189F98 /* SemanticResultListView.swift */; };
+		82B85B922C90ADD000189F98 /* BouncyButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B85B912C90ADD000189F98 /* BouncyButtonStyle.swift */; };
+		82B85B942C90B28000189F98 /* BouncyButtonViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B85B932C90B28000189F98 /* BouncyButtonViewModifier.swift */; };
+		82B85B962C90B2C700189F98 /* AnimtedButtonScaleViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B85B952C90B2C700189F98 /* AnimtedButtonScaleViewModifier.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +97,9 @@
 		82B85B882C8F3BF500189F98 /* SemanticResultListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticResultListItemView.swift; sourceTree = "<group>"; };
 		82B85B8A2C8F3E3200189F98 /* DiagramState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramState.swift; sourceTree = "<group>"; };
 		82B85B8F2C8F6B3700189F98 /* SemanticResultListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticResultListView.swift; sourceTree = "<group>"; };
+		82B85B912C90ADD000189F98 /* BouncyButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BouncyButtonStyle.swift; sourceTree = "<group>"; };
+		82B85B932C90B28000189F98 /* BouncyButtonViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BouncyButtonViewModifier.swift; sourceTree = "<group>"; };
+		82B85B952C90B2C700189F98 /* AnimtedButtonScaleViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimtedButtonScaleViewModifier.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -237,6 +243,9 @@
 				829DFA612C62B912005E4671 /* CollectDictPrefKey.swift */,
 				829DFA692C69532B005E4671 /* UXMetrics.swift */,
 				829DFA6B2C6A804B005E4671 /* Color+Extensions.swift */,
+				82B85B912C90ADD000189F98 /* BouncyButtonStyle.swift */,
+				82B85B932C90B28000189F98 /* BouncyButtonViewModifier.swift */,
+				82B85B952C90B2C700189F98 /* AnimtedButtonScaleViewModifier.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -391,6 +400,7 @@
 				8273F6762C62673B00B589A7 /* DiagramViewModel.swift in Sources */,
 				82B85B892C8F3BF500189F98 /* SemanticResultListItemView.swift in Sources */,
 				82B85B862C8F380400189F98 /* ErrorView.swift in Sources */,
+				82B85B942C90B28000189F98 /* BouncyButtonViewModifier.swift in Sources */,
 				82721F4F2C875E17005AC946 /* ShapeMarker.swift in Sources */,
 				82B85B902C8F6B3700189F98 /* SemanticResultListView.swift in Sources */,
 				8270430E2C74EC1300E2BCE9 /* EdgeDescriptor.swift in Sources */,
@@ -401,6 +411,7 @@
 				826FF0312C60580A00559DED /* ContentView.swift in Sources */,
 				827043142C7512F800E2BCE9 /* EdgeAnchorPlacement.swift in Sources */,
 				827043162C7515D700E2BCE9 /* EdgePathResolver.swift in Sources */,
+				82B85B962C90B2C700189F98 /* AnimtedButtonScaleViewModifier.swift in Sources */,
 				8273F6702C6262C100B589A7 /* EdgeView.swift in Sources */,
 				829DFA642C693368005E4671 /* InputTextView.swift in Sources */,
 				82B85B8B2C8F3E3200189F98 /* DiagramState.swift in Sources */,
@@ -412,6 +423,7 @@
 				82735CB02C7EBE380015A85A /* FlowDirection.swift in Sources */,
 				829DFA6C2C6A804B005E4671 /* Color+Extensions.swift in Sources */,
 				826FF02F2C60580A00559DED /* CornerApp.swift in Sources */,
+				82B85B922C90ADD000189F98 /* BouncyButtonStyle.swift in Sources */,
 				829DFA622C62B912005E4671 /* CollectDictPrefKey.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
