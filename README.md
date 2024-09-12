@@ -16,7 +16,7 @@ Corner is an open-source macOS app designed to transform structured text into st
       - [Node Attributes](#node-attributes)
       - [Edge Declaration](#edge-declaration)
       - [Edge Attributes](#edge-attributes)
-      - [Combining Nodes and Edges](#5-combining-nodes-and-edges)
+      - [Combining Nodes and Edges](#combining-nodes-and-edges)
 - [Complete Example](#complete-example)
 - [Known Issues](#known-issues)
 
@@ -172,7 +172,7 @@ calls EndNode {
 
 This example declares that the edge between the current node and `EndNode` has the label “completes.”
 
-####  Combining Nodes and Edges
+#### Combining Nodes and Edges
 
 Nodes can have both attributes and edges. Below is an example combining node color and an edge with a label:
 
