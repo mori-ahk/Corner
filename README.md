@@ -5,6 +5,31 @@
 # Corner
 Corner is an open-source macOS app designed to transform structured text into stunning diagrams
 
+# Table of Contents
+
+- [Installation](#installation)
+- [Corner Language Documentation](#corner-language-documentation)
+    - [Language Overview](#language-overview)
+        - [Grammar Summary](#grammar-summary)
+    - [Key Elements](#key-elements)
+      - [Node Declaration](#1-node-declaration)
+      - [Node Attributes](#2-node-attributes)
+      - [Edge Declaration](#3-edge-declaration)
+      - [Edge Attributes](#4-edge-attributes)
+      - [Combining Nodes and Edges](#5-combining-nodes-and-edges)
+- [Complete Example](#complete-example)
+- [Known Issues](#known-issues)
+
+# Installation
+
+You can easily install **Corner** by downloading the latest release from the [Releases](https://github.com/your-repo/releases) section of this repository.
+
+1. Go to the [Releases](https://github.com/mori-ahk/Corner/releases) page.
+2. Download the `.dmg` file for the latest version.
+3. Open the file and follow the instructions to install Corner on your macOS device.
+4. If you run into a warning regarding "unidentified developer". Follow this [link](https://support.apple.com/en-ca/guide/mac-help/mh40616/mac).
+5. Launch Corner.
+
 # Corner Language Documentation
 
 Corner language is a simple and flexible way to define diagrams in Corner, an open-source macOS app. This language allows you to define nodes and edges with customizable attributes like colors and labels. Below is a detailed breakdown of the grammar and how to use it effectively.
