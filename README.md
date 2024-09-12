@@ -22,7 +22,7 @@ Corner is an open-source macOS app designed to transform structured text into st
 
 # Installation
 
-You can easily install **Corner** by downloading the latest release from the [Releases](https://github.com/your-repo/releases) section of this repository.
+You can easily install **Corner** by downloading the latest release from the [Releases](https://github.com/mori-ahk/Corner/releases) section of this repository.
 
 1. Go to the [Releases](https://github.com/mori-ahk/Corner/releases) page.
 2. Download the `.dmg` file for the latest version.
