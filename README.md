@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/mori-ahk/Corner/blob/main/Corner/Assets.xcassets/AppIcon.appiconset/Corner%40256%201.png" alt="Corner Logo" width="200"/>
+</p>
+
 # Corner
 Corner is an open-source macOS app designed to transform structured text into stunning diagrams
 
