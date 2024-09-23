@@ -1,0 +1,15 @@
+{
+  "originHash" : "49dc9ef750f58401f452fab789fe51f61a5f8f3860b52434163f9ffe66d95aa8",
+  "pins" : [
+    {
+      "identity" : "cornerparser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mori-ahk/CornerParser",
+      "state" : {
+        "branch" : "main",
+        "revision" : "bb41f03c23844a14a805a4d5c56fe7f9020abe18"
+      }
+    }
+  ],
+  "version" : 3
+}
