@@ -85,12 +85,20 @@ class EdgePathResolver {
         var edgeIntersection = doesEdgeIntersect(with: point, in: direction, at: layerIndex)
         
         while edgeIntersection.hasSameX {
-            point.x += direction.isTowardsEast ? UXMetrics.Padding.eight : -UXMetrics.Padding.eight
+            if direction == .south || direction == .north {
+                point.x += UXMetrics.Padding.eight
+            } else {
+                point.x += direction.isTowardsEast ? UXMetrics.Padding.eight : -UXMetrics.Padding.eight
+            }
             edgeIntersection = doesEdgeIntersect(with: point, in: direction, at: layerIndex)
         }
         
         while edgeIntersection.hasSameY {
-            point.y += direction.isTowardsNorth ? -UXMetrics.Padding.sixteen : UXMetrics.Padding.sixteen
+            if direction == .east || direction == .west {
+                point.y += UXMetrics.Padding.sixteen
+            } else {
+                point.y += direction.isTowardsNorth ? -UXMetrics.Padding.sixteen : UXMetrics.Padding.sixteen
+            }
             edgeIntersection = doesEdgeIntersect(with: point, in: direction, at: layerIndex)
         }
         
