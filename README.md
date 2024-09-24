@@ -5,6 +5,9 @@
 # Corner
 Corner is an open-source macOS app designed to transform structured text into stunning diagrams
 
+# Sample Diagram
+![sample diagram](./Screenshots/Example_4.png)
+
 # Table of Contents
 
 - [Installation](#installation)
