@@ -11,7 +11,7 @@ struct DiagramLayout: Layout {
     var diagram: Diagram
     
     private enum LayoutConstants {
-        static let verticalNodeSpacing: CGFloat = 64
+        static let verticalNodeSpacing: CGFloat = 32
         static let verticalEdgeSpacing: CGFloat = 32
         static let horizontalMinSpacing: CGFloat = 80
         static let labelWidthMultiplier: CGFloat = 6
@@ -71,14 +71,16 @@ struct DiagramLayout: Layout {
         subviews[subviewIndex].place(
             at: CGPoint(x: point.x, y: y),
             anchor: .leading,
-            proposal: proposal
+            proposal: ProposedViewSize(width: proposal.width, height: subviews[subviewIndex].sizeThatFits(.infinity).height)
         )
         
+        y += subviews[subviewIndex].sizeThatFits(.infinity).height
         subviewIndex += 1
         
         if node.edges.count > 1 {
             y += CGFloat(node.edges.count) * LayoutConstants.verticalEdgeSpacing
         }
+       
         
         return y
     }
